@@ -75,7 +75,7 @@ BEGIN
 	Term4	:= INT_TO_WORD(LL_t4_e1);
 
 	
-	ErrorMsg := REAL_TO_WORD( Map(1) );
+	ErrorMsg := INT_TO_WORD(REAL_TO_INT( Map(1) ));
 	
 END_ORGANIZATION_BLOCK
 
