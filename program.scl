@@ -1,42 +1,42 @@
 ﻿
-Term3 := INT_TO_WORD(REAL_TO_INT(
-LimRange(
-L1:=0.0, L2:=150.0,
-v:=MapARange(
-v := INT_TO_REAL(LL_t3_420) / 10.0,
-i1:=0.0, i2:=27648.0,
-o1:=0.0, o2:=150.0
-)
-)
-));
+  Term3 := INT_TO_WORD(REAL_TO_INT(
+    LimRange(
+      L1:=0.0, L2:=150.0,
+      v:=MapARange(
+        v := INT_TO_REAL(LL_t3_420) / 10.0,
+        i1:=0.0, i2:=27648.0,
+        o1:=0.0, o2:=150.0
+      )
+    )
+  ));
 
 
 FUNCTION "MapARange" : REAL
-VAR_INPUT
-v:REAL;
-i1:REAL;
-i2:REAL;
-o1:REAL;
-o2:REAL;
-END_VAR
+  VAR_INPUT
+    v:  REAL;
+    i1:  REAL;
+    i2:  REAL;
+    o1:  REAL;
+    o2:  REAL;
+  END_VAR
 BEGIN
-#MapARange := (#v - #i1) / (#i2 - #i1) * (#o2 - #o1) + #o1;
+  #MapARange := (#v - #i1) / (#i2 - #i1) * (#o2 - #o1) + #o1;
 END_FUNCTION
 
 FUNCTION "LimRange" : REAL
-VAR_INPUT
-L1:REAL;
-L2:REAL;
-v:REAL;
-END_VAR
+  VAR_INPUT
+    L1:  REAL;
+    L2:  REAL;
+    v:  REAL;
+  END_VAR
 BEGIN
-IF #v < #L1 THEN
-#LimRange := #L1;
-ELSIF #v > #L2 THEN
-#LimRange := #L2;
-ELSE
-#LimRange := #v;
-END_IF;
+  IF #v < #L1 THEN
+    #LimRange := #L1;
+  ELSIF #v > #L2 THEN
+    #LimRange := #L2;
+  ELSE
+    #LimRange := #v;
+  END_IF;
 END_FUNCTION
 
 DATA_BLOCK "t1"
@@ -56,28 +56,29 @@ END_DATA_BLOCK
 
 
 FUNCTION_BLOCK "Avg01_code"
-VAR_IN_OUT
-X:REAL;
-t:REAL;
-init:BOOL;
-Q:REAL;
-END_VAR
+  VAR_IN_OUT
+    X:  REAL;
+    t:  REAL;
+    init:  BOOL;
+    Q:  REAL;
+  END_VAR
 BEGIN
-IF #init = 1
-THEN #Q := #X; END_IF;
-
-IF #t < 0.1 THEN
-#t := 0.1;
-END_IF;
-
-#Q := #Q + ((#X - #Q) / #t / 10);
-
+  IF #init = 1
+  THEN #Q := #X; END_IF;
+  
+  IF #t < 0.1 THEN
+    #t := 0.1;
+  END_IF;
+  
+  #Q := #Q + ((#X - #Q) / #t / 10);
+  
 END_FUNCTION_BLOCK
 
 DATA_BLOCK "BD"
 NON_RETAIN
    STRUCT
-      x1 : Bool;
+      x1:  Bool;
+      MainState:  WORD;
    END_STRUCT;
 BEGIN
 END_DATA_BLOCK
@@ -97,34 +98,76 @@ ORGANIZATION_BLOCK "Main"
       OB1_DATE_TIME : Date_And_Time;   // Date and time OB1 started
    END_VAR
 BEGIN
-t1.TON(IN := NOT BD.x1,
-                     PT := T#2s,
-                     Q => BD.x1);
-
-t2.TOF(IN := t1.Q,
-                       PT := T#1s,
+  t1.TON(IN := NOT BD.x1,
+                       PT := T#2s,
                        Q => BD.x1);
 
+  t2.TOF(IN := t1.Q,
+                         PT := T#1s,
+                         Q => BD.x1);
+
+  
+  CASE BD.MainState OF
+  0: // Выкл
+    ll_V6  := 0;
+    ll_V9  := 0;
+    ll_V4  := 0;
+    ll_V7  := 0;
+    ll_V3  := 0;
+    ll_V2a  := 0;
+    ll_V2b  := 0;
+    ll_V1  := 0;
+    
+    StatusButton1 := 1;
+    StatusButton2 := 1;
+    StatusButton3 := 1;
+    IF EnterButton1 THEN
+      BD.MainState := 1;
+    ELSIF EnterButton2 THEN
+      BD.MainState := 2;
+    END_IF;
+  
+  1: // Мойка
+    StatusButton1 := 2;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+    IF EnterButton1 THEN
+      BD.MainState := 0;
+    END_IF;
+  
+  2: // Прокачка воды
+    StatusButton1 := 0;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+  
+  END_CASE;
+  
+  IF EnterStop THEN
+    BD.MainState := 0;
+  END_IF;
+  
+  StepMessage  := BD.MainState;
+  Step  := BD.MainState;
+  
+  PercVolumeData  := INT_TO_WORD(LL_Level_420);
+  
+  Term3  := INT_TO_WORD(LL_t3_e1);
+  
+  Term4 := INT_TO_WORD(REAL_TO_INT(
+    LimRange(
+      L1:=0.0, L2:=250.0,
+      v:=MapARange(
+        v := INT_TO_REAL(LL_t4_420),
+        i1:=0.0, i2:=27648.0,
+        o1:=0.0, o2:=200.0
+      )
+    )
+  ));
+  
 
 
-PercVolumeData:= INT_TO_WORD(LL_Level_420);
-
-Term3:= INT_TO_WORD(LL_t3_e1);
-
-Term4 := INT_TO_WORD(REAL_TO_INT(
-LimRange(
-L1:=0.0, L2:=250.0,
-v:=MapARange(
-v := INT_TO_REAL(LL_t4_420),
-i1:=0.0, i2:=27648.0,
-o1:=0.0, o2:=200.0
-)
-)
-));
-
-
-
-
-
+  
+  
+  
 END_ORGANIZATION_BLOCK
 
