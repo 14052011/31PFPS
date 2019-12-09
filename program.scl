@@ -1,4 +1,13 @@
 ﻿
+FUNCTION "Map" : REAL
+	VAR_INPUT
+		a: REAL;
+	END_VAR
+BEGIN
+	#Map := #a + 1;
+END_FUNCTION
+
+
 DATA_BLOCK "t1"
 TOF
 BEGIN
@@ -66,6 +75,7 @@ BEGIN
 	Term4	:= INT_TO_WORD(LL_t4_e1);
 
 	
+	ErrorMsg := REAL_TO_WORD( Map(1) );
 	
 END_ORGANIZATION_BLOCK
 
