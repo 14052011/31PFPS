@@ -146,7 +146,7 @@ BEGIN
     BD.MainState := 0;
   END_IF;
   
-  StepMessage  := BD.MainState;
+  Step_message  := BD.MainState;
   Step  := BD.MainState;
   
   PercVolumeData  := INT_TO_WORD(LL_Level_420);
