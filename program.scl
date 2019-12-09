@@ -78,7 +78,7 @@ DATA_BLOCK "BD"
 NON_RETAIN
    STRUCT
       x1:  Bool;
-      MainState:  WORD;
+      MainState:  INT;
    END_STRUCT;
 BEGIN
 END_DATA_BLOCK
@@ -146,8 +146,8 @@ BEGIN
     BD.MainState := 0;
   END_IF;
   
-  Step_message  := BD.MainState;
-  Step  := BD.MainState;
+  Step_message  := INT_TO_WORD(BD.MainState);
+  Step  := INT_TO_WORD(BD.MainState);
   
   PercVolumeData  := INT_TO_WORD(LL_Level_420);
   
