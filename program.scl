@@ -62,8 +62,8 @@ BEGIN
 	FBlk1.i1 := BD.x1;
 	
 	
-	PercVolumeData	:= INT_TO_WORD(ll_TankLevel_420);
-	Term4	:= INT_TO_WORD(ll_t4_Pt100);
+	PercVolumeData	:= INT_TO_WORD(LL_Level_420);
+	Term4	:= INT_TO_WORD(LL_t4_e1);
 
 	
 	
