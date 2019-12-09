@@ -61,5 +61,10 @@ BEGIN
 	           q1=>BD.x1);
 	FBlk1.i1 := BD.x1;
 	
+	
+	PercVolumeData	:= ll_TankLevel_420;
+	Term4	:= ll_t4_Pt100;
+	
+	
 END_ORGANIZATION_BLOCK
 
