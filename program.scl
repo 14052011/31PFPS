@@ -105,9 +105,6 @@ t2.TOF(IN := t1.Q,
                        PT := T#1s,
                        Q => BD.x1);
 
-FBlk1(i1:=BD.x1,
-           q1=>BD.x1);
-FBlk1.i1 := BD.x1;
 
 
 PercVolumeData:= INT_TO_WORD(LL_Level_420);
