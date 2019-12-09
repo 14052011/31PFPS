@@ -121,10 +121,14 @@ BEGIN
     StatusButton1 := 1;
     StatusButton2 := 1;
     StatusButton3 := 1;
-    IF EnterButton1 THEN
-      BD.MainState := 1;
-    ELSIF EnterButton2 THEN
-      BD.MainState := 2;
+    IF ErrorMsg <> 0 THEN
+      IF EnterButton1 THEN
+        BD.MainState := 1;
+      ELSIF EnterButton2 THEN
+        BD.MainState := 2;
+      ELSIF EnterButton3 THEN
+        ErrorMsg := 1;
+      END_IF;
     END_IF;
   
   1: // Мойка
@@ -144,6 +148,9 @@ BEGIN
   
   IF EnterStop THEN
     BD.MainState := 0;
+  END_IF;
+  IF ResetError THEN
+    ErrorMsg := 0;
   END_IF;
   
   Step_message  := INT_TO_WORD(BD.MainState);
