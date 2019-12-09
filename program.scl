@@ -1,0 +1,65 @@
+﻿
+DATA_BLOCK t1
+TOF
+BEGIN
+END_DATA_BLOCK
+
+DATA_BLOCK t2
+TON
+BEGIN
+END_DATA_BLOCK
+
+DATA_BLOCK FBlk1
+FBlk1_code
+BEGIN
+END_DATA_BLOCK
+
+FUNCTION_BLOCK FBlk1_code
+   VAR_INPUT 
+      i1 : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      q1 : Bool;
+   END_VAR
+BEGIN
+	#q1 := #i1;
+END_FUNCTION_BLOCK
+
+DATA_BLOCK BD
+NON_RETAIN
+   STRUCT
+      x1 : Bool;
+   END_STRUCT;
+BEGIN
+END_DATA_BLOCK
+
+
+ORGANIZATION_BLOCK Main
+   VAR_TEMP 
+      OB1_EV_CLASS : Byte;   // Bits 0-3 = 1 (Coming event), Bits 4-7 = 1 (Event class 1)
+      OB1_SCAN_1 : Byte;   // 1 (Cold restart scan 1 of OB 1), 3 (Scan 2-n of OB 1)
+      OB1_PRIORITY : Byte;   // Priority of OB Execution
+      OB1_OB_NUMBR : Byte;   // 1 (Organization block 1, OB1)
+      OB1_RESERVED_1 : Byte;   // Reserved for system
+      OB1_RESERVED_2 : Byte;   // Reserved for system
+      OB1_PREV_CYCLE : Int;   // Cycle time of previous OB1 scan (milliseconds)
+      OB1_MIN_CYCLE : Int;   // Minimum cycle time of OB1 (milliseconds)
+      OB1_MAX_CYCLE : Int;   // Maximum cycle time of OB1 (milliseconds)
+      OB1_DATE_TIME : Date_And_Time;   // Date and time OB1 started
+   END_VAR
+BEGIN
+	t1.TON(IN := NOT BD.x1,
+	                     PT := T#2s,
+	                     Q => BD.x1);
+
+	t2.TOF(IN := t1.Q,
+	                       PT := T#1s,
+	                       Q => BD.x1);
+
+	FBlk1(i1:=BD.x1,
+	           q1=>BD.x1);
+	FBlk1.i1 := BD.x1;
+	
+END_ORGANIZATION_BLOCK
+
