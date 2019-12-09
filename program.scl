@@ -1,12 +1,33 @@
 ﻿
-FUNCTION "Map" : REAL
+
+
+FUNCTION "MapARange" : REAL
 	VAR_INPUT
-		a: REAL;
+		v:	REAL;
+		i1:	REAL;
+		i2:	REAL;
+		o1:	REAL;
+		o2:	REAL;
 	END_VAR
 BEGIN
-	#Map := #a + 1;
+	#MapARange := (#v - #i1) / (#i2 - #i1) * (#o2 - #o1) + #o1;
 END_FUNCTION
 
+FUNCTION "LimRange" : REAL
+	VAR_INPUT
+		L1:	REAL;
+		L2:	REAL;
+		v:	REAL;
+	END_VAR
+BEGIN
+	IF #v < #L1 THEN
+		#LimRange := #L1;
+	ELSIF #v > #L2 THEN
+		#LimRange := #L2;
+	ELSE
+		#LimRange := #v;
+	END_IF;
+END_FUNCTION
 
 DATA_BLOCK "t1"
 TOF
@@ -18,21 +39,31 @@ TON
 BEGIN
 END_DATA_BLOCK
 
-DATA_BLOCK "FBlk1"
-"FBlk1_code"
+DATA_BLOCK "avg001"
+"Avg01_code"
 BEGIN
 END_DATA_BLOCK
 
-FUNCTION_BLOCK "FBlk1_code"
-   VAR_INPUT
-      i1 : Bool;
-   END_VAR
 
-   VAR_OUTPUT 
-      q1 : Bool;
-   END_VAR
+FUNCTION_BLOCK "Avg01_code"
+	VAR_INPUT
+		X:	REAL;
+		t:	REAL;
+		init:	BOOL;
+	END_VAR
+	VAR_OUTPUT
+		Q:	REAL;
+	END_VAR
 BEGIN
-	#q1 := #i1;
+	IF #init = 1
+	THEN #Q := #X; END_IF;
+	
+	IF #t < 0.1 THEN
+		#t := 0.1;
+	END_IF;
+	
+	#Q := #Q + ((#X - #Q) / #t / 10);
+	
 END_FUNCTION_BLOCK
 
 DATA_BLOCK "BD"
@@ -72,6 +103,18 @@ BEGIN
 	
 	
 	PercVolumeData	:= INT_TO_WORD(LL_Level_420);
+	
+	Term3 := INT_TO_WORD(REAL_TO_INT(
+		LimRange(
+			0, 150,
+			MapARange(
+				INT_TO_REAL(LL_t3_420) / 10,
+				0, 27648,
+				0, 150
+			)
+		)
+	));
+	
 	Term4	:= INT_TO_WORD(LL_t4_e1);
 
 	
