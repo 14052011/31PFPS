@@ -144,7 +144,9 @@ NON_RETAIN
       
     Pump1:  BOOL;
     Pump1_Perc:  REAL;
-    
+      
+    Sub_3T_State:  INT;
+    TankLevel:  REAL;
   END_STRUCT;
 BEGIN
 END_DATA_BLOCK
@@ -177,11 +179,27 @@ BEGIN
   ep_GA2_btn(CLK := EnterButton2);
   ep_GA3_btn(CLK := EnterButton3);
 
+	
+	CASE BD.Sub_3T_State OF
+	0: // OFF
+	  BD.V9 := 0;
+	
+	1: // Прогон воды, большой гистерезис
+	  IF BD.TankLevel < 15.0 THEN
+	    BD.V9 := 1;
+	  END_IF;
+	  IF BD.TankLevel > 80.0 THEN
+	    BD.V9 := 0;
+	  END_IF;
+	
+	END_IF;
+	
+	Step_3T := INT_TO_WORD( BD.Sub_3T_State );
 
   CASE BD.MainState OF
   0: // Р’С‹РєР» / RESET ALL
     BD.V6  := 0;
-    BD.V9  := 0;
+    BD.Sub_3T_State  := 0;
     BD.V4  := 0;
     BD.V7  := 0;
     BD.V3  := 0;
@@ -215,6 +233,7 @@ BEGIN
   
   2: // РџСЂРѕРєР°С‡РєР° РІРѕРґС‹
     BD.V6  := 0;
+    BD.Sub_3T_State  := 1;
     BD.V4  := 0;
     BD.V7  := 1;
     BD.V3  := 0;
@@ -283,8 +302,22 @@ BEGIN
   Step_message  := INT_TO_WORD(BD.MainState);
   Step  := INT_TO_WORD(BD.MainState);
 
-  PercVolumeData  := INT_TO_WORD(LL_Level_420);
+
+  PercVolumeData := INT_TO_WORD( LL_Level_420 );
   
+  r1 := INT_TO_REAL(LL_Level_420);
+  r1 := LimRange(
+    L1:=0.0, L2:=150.0,
+    v:=MapARange(
+      v := r1,
+      i1:=13872.0, i2:=14800.0,
+      o1:=0.0, o2:=100.0
+    )
+  );
+  BD.TankLevel := r1;
+  PercVolume := INT_TO_WORD(REAL_TO_INT( BD.TankLevel * 10 ));
+
+
   r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
   IF r1 < 51.2 THEN
     r1 := MapARange(
