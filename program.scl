@@ -50,16 +50,16 @@ END_DATA_BLOCK
 
 FUNCTION_BLOCK "Avg01_code"
   VAR_INPUT
-    X:  REAL;
-    t:  REAL;
-    init:  BOOL;
+    X  :  REAL;
+    t  :  REAL;
+    init  :  BOOL;
   END_VAR
   VAR_OUTPUT
-    Q:  REAL;
+    Q  :  REAL;
   END_VAR
   VAR
-    Q_:  REAL;
-    t_:  REAL;
+    Q_  :  REAL;
+    t_  :  REAL;
   END_VAR
 BEGIN
   IF #init
