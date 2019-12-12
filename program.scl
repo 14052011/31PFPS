@@ -241,7 +241,7 @@ BEGIN
     )
   );
   IF r1 < 45.0 THEN
-    Term4 := MapARange(
+    r1 := MapARange(
       v := r1,
       i1:=11.1, i2:=45.0,
       o1:=9.6, o2:=44.2
