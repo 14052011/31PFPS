@@ -129,6 +129,8 @@ NON_RETAIN
    STRUCT
       x1:  Bool;
       MainState:  INT;
+      t3_real:  REAL;
+      t4_real:  REAL;
    END_STRUCT;
 BEGIN
 END_DATA_BLOCK
@@ -146,6 +148,7 @@ ORGANIZATION_BLOCK "Main"
       OB1_MIN_CYCLE : Int;   // Minimum cycle time of OB1 (milliseconds)
       OB1_MAX_CYCLE : Int;   // Maximum cycle time of OB1 (milliseconds)
       OB1_DATE_TIME : Date_And_Time;   // Date and time OB1 started
+  r1:  REAL;
    END_VAR
 BEGIN
   t1.TON(IN := NOT BD.x1,
@@ -212,44 +215,46 @@ BEGIN
   
   PercVolumeData  := INT_TO_WORD(LL_Level_420);
   
-  Term3  := INT_TO_WORD(LL_t3_e1);
-  IF Term3 < 51.2 THEN
-    Term3 := MapARange(
-      v := Term3,
+  r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
+  IF r1 < 51.2 THEN
+    r1 := MapARange(
+      v := r1,
       i1:=16.0, i2:=51.2,
       o1:=9.6, i2:=44.2
     );
   ELSE
-    Term3 := MapARange(
-      v := Term3,
+    r1 := MapARange(
+      v := r1,
       i1:=51.2, i2:=96.0,
       o1:=44.2, i2:=90.0
     );
   END_IF;
+  BD.t3_real := r1;
+  Term3 := INT_TO_WORD(REAL_TO_INT( BD.t3_real * 10 ));
   
-  Term4 := INT_TO_WORD(REAL_TO_INT(
-    LimRange(
-      L1:=0.0, L2:=2500.0,
-      v:=MapARange(
-        v := INT_TO_REAL(LL_t4_420),
-        i1:=0.0, i2:=27648.0,
-        o1:=0.0, o2:=2000.0
-      )
+  r1 := LimRange(
+    L1:=0.0, L2:=250.0,
+    v:=MapARange(
+      v := INT_TO_REAL(LL_t4_420),
+      i1:=0.0, i2:=27648.0,
+      o1:=0.0, o2:=200.0
     )
-  ));
-  IF Term4 < 45.0 THEN
+  );
+  IF r1 < 45.0 THEN
     Term4 := MapARange(
-      v := Term4,
+      v := r1,
       i1:=11.1, i2:=45.0,
       o1:=9.6, i2:=44.2
     );
   ELSE
-    Term4 := MapARange(
-      v := Term4,
+    r1 := MapARange(
+      v := r1,
       i1:=45.0, i2:=90.6,
       o1:=44.2, i2:=90.0
     );
   END_IF;
+  BD.t4_real := r1;
+  Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
 
 
