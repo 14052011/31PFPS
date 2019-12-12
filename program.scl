@@ -175,7 +175,7 @@ BEGIN
     StatusButton1 := 1;
     StatusButton2 := 1;
     StatusButton3 := 1;
-    IF ErrorMsg <> 0 THEN
+    IF ErrorMsg = 0 THEN
       IF ep_GA1_Btn.Q01 THEN
         BD.MainState := 1;
       ELSIF ep_GA2_Btn.Q01 THEN
