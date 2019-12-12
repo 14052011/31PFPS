@@ -154,10 +154,6 @@ BEGIN
                          PT := T#1s,
                          Q => BD.x1);
 
-  FBlk1(i1:=BD.x1,
-             q1=>BD.x1);
-  FBlk1.i1 := BD.x1;
-  
   ep_GA1_btn(
     CLK := EnterButton1,
   );
