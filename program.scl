@@ -213,6 +213,19 @@ BEGIN
   PercVolumeData  := INT_TO_WORD(LL_Level_420);
   
   Term3  := INT_TO_WORD(LL_t3_e1);
+  IF Term3 < 51.2 THEN
+    Term3 := MapARange(
+      v := Term3,
+      i1:=16.0, i2:=51.2,
+      o1:=9.6, i2:=44.2
+    );
+  ELSE
+    Term3 := MapARange(
+      v := Term3,
+      i1:=51.2, i2:=96.0,
+      o1:=44.2, i2:=90.0
+    );
+  END_IF;
   
   Term4 := INT_TO_WORD(REAL_TO_INT(
     LimRange(
@@ -224,6 +237,19 @@ BEGIN
       )
     )
   ));
+  IF Term4 < 45.0 THEN
+    Term4 := MapARange(
+      v := Term4,
+      i1:=11.1, i2:=45.0,
+      o1:=9.6, i2:=44.2
+    );
+  ELSE
+    Term4 := MapARange(
+      v := Term4,
+      i1:=45.0, i2:=90.6,
+      o1:=44.2, i2:=90.0
+    );
+  END_IF;
   
 
 
