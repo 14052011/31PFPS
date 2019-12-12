@@ -147,6 +147,8 @@ NON_RETAIN
       
     Sub_3T_State:  INT;
     TankLevel:  REAL;
+      
+    Sub_2SC_State:  INT;
   END_STRUCT;
 BEGIN
 END_DATA_BLOCK
@@ -167,6 +169,15 @@ ORGANIZATION_BLOCK "Main"
   r1:  REAL;
    END_VAR
 BEGIN
+
+
+
+
+
+
+
+
+
   t1.TON(IN := NOT BD.x1,
                        PT := T#2s,
                        Q => BD.x1);
@@ -179,6 +190,18 @@ BEGIN
   ep_GA2_btn(CLK := EnterButton2);
   ep_GA3_btn(CLK := EnterButton3);
 
+	
+	CASE BD.Sub_2SC_State OF
+	0: // OK
+	    BD.V2a  := 0;
+	    BD.V2b  := 1;
+	1: // SHORT-CIRCUIT
+	    BD.V2a  := 1;
+	    BD.V2b  := 0;
+	
+	END_CASE;
+	
+	Step_2SC := INT_TO_WORD( BD.Sub_2SC_State );
 	
 	CASE BD.Sub_3T_State OF
 	0: // OFF
@@ -203,8 +226,6 @@ BEGIN
     BD.V4  := 0;
     BD.V7  := 0;
     BD.V3  := 0;
-    BD.V2a  := 0;
-    BD.V2b  := 0;
     BD.V1  := 0;
     
     BD.Pump1  := 0;
@@ -237,8 +258,6 @@ BEGIN
     BD.V4  := 0;
     BD.V7  := 1;
     BD.V3  := 0;
-    BD.V2a  := 0;
-    BD.V2b  := 0;
     BD.V1  := 0;
     
     BD.Pump1  := 1;
