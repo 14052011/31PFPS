@@ -49,7 +49,7 @@ TON
 BEGIN
 END_DATA_BLOCK
 
-DATA_BLOCK "avg001"
+DATA_BLOCK "avg01_0001"
 "Avg01_code"
 BEGIN
 END_DATA_BLOCK
@@ -72,6 +72,30 @@ BEGIN
   
   #Q := #Q + ((#X - #Q) / #t / 10);
   
+END_FUNCTION_BLOCK
+
+DATA_BLOCK "EdgePulse_0001"
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+
+FUNCTION_BLOCK "EdgePulse_code"
+  VAR_IN_OUT
+    CLK:  BOOL;
+    Q0:  BOOL;
+    Q1:  BOOL;
+    Q01:  BOOL;
+  END_VAR
+  VAR
+    CLK_prev:  BOOL;
+  END_VAR
+  IF #CLK = #CLK_prev THEN
+    #Q0:=0;  #Q1:=0;  #Q01:=0;
+  ELSE
+    IF #CLK > #CLK_prev THEN #Q1:=1; ELSE #Q0:=1; END_IF;
+    #Q01 := 1;
+    #CLK_prev := #CLK;
+  END_IF;
 END_FUNCTION_BLOCK
 
 DATA_BLOCK "BD"
