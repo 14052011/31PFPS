@@ -126,12 +126,26 @@ END_DATA_BLOCK
 
 DATA_BLOCK "BD"
 NON_RETAIN
-   STRUCT
-      x1:  Bool;
-      MainState:  INT;
-      t3_real:  REAL;
-      t4_real:  REAL;
-   END_STRUCT;
+  STRUCT
+    x1:  Bool;
+    MainState:  INT;
+      
+    t3_real:  REAL;
+    t4_real:  REAL;
+      
+    V6:  BOOL;
+    V9:  BOOL;
+    V4:  BOOL;
+    V7:  BOOL;
+    V3:  BOOL;
+    V2a:  BOOL;
+    V2b:  BOOL;
+    V1:  BOOL;
+      
+    Pump1:  BOOL;
+    Pump1_Perc:  REAL;
+    
+  END_STRUCT;
 BEGIN
 END_DATA_BLOCK
 
@@ -165,15 +179,18 @@ BEGIN
 
 
   CASE BD.MainState OF
-  0: // Выкл
-    ll_V6  := 0;
-    ll_V9  := 0;
-    ll_V4  := 0;
-    ll_V7  := 0;
-    ll_V3  := 0;
-    ll_V2a  := 0;
-    ll_V2b  := 0;
-    ll_V1  := 0;
+  0: // Выкл / RESET ALL
+    BD.V6  := 0;
+    BD.V9  := 0;
+    BD.V4  := 0;
+    BD.V7  := 0;
+    BD.V3  := 0;
+    BD.V2a  := 0;
+    BD.V2b  := 0;
+    BD.V1  := 0;
+    
+    BD.Pump1  := 0;
+    BD.Pump1_Perc  := 0.0;
     
     StatusButton1 := 1;
     StatusButton2 := 1;
@@ -197,22 +214,74 @@ BEGIN
     END_IF;
   
   2: // Прокачка воды
+    BD.V6  := 0;
+    BD.V4  := 0;
+    BD.V7  := 1;
+    BD.V3  := 0;
+    BD.V2a  := 0;
+    BD.V2b  := 0;
+    BD.V1  := 0;
+    
+    BD.Pump1  := 1;
+    BD.Pump1_Perc  := 80.0;
+    
+    StatusButton1 := 0;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+  
+  3: // Цирк + разогрев
+    StatusButton1 := 0;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+  
+  4: // Цирк + время стерилиз
+    StatusButton1 := 0;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+  
+  5: // Готов к произв
     StatusButton1 := 0;
     StatusButton2 := 0;
     StatusButton3 := 0;
   
   END_CASE;
-  
+
+
   IF EnterStop THEN
     BD.MainState := 0;
   END_IF;
+
   IF ResetError THEN
     ErrorMsg := 0;
   END_IF;
-  
+
+  IF NOT LL_EmergencyStop_NC THEN
+    BD.MainState  := 0;
+    ErrorMsg  := 6;
+  END_IF;
+  IF ErrorMsg <> 0 THEN
+    LL_FaultLight := 1;
+    LL_MsgLight := 1;
+  ELSE
+    LL_FaultLight := 0;
+    LL_MsgLight := 0;
+  END_IF;
+
+  IF BD.MainState <> 0 THEN
+    LL_RunningLight := 1;
+  ELSE
+    LL_RunningLight := 0;
+  END_IF;
+
+  IF LL_AirPressureOK THEN
+    LL_PneumoAirPresentLight := 1;
+  ELSE
+    LL_PneumoAirPresentLight := 0;
+  END_IF;
+
   Step_message  := INT_TO_WORD(BD.MainState);
   Step  := INT_TO_WORD(BD.MainState);
-  
+
   PercVolumeData  := INT_TO_WORD(LL_Level_420);
   
   r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
@@ -257,9 +326,22 @@ BEGIN
   Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
 
+  ll_V6  :=  BD.V6;
+  ll_V9  :=  BD.V9;
+  ll_V4  :=  BD.V4;
+  ll_V7  := NOT  BD.V7;
+  ll_V3  := NOT  BD.V3;
+  ll_V2a  :=  BD.V2a;
+  ll_V2b  :=  BD.V2b;
+  ll_V1  :=  BD.V1;
+      
+  LL_Pump1 := BD.Pump1;
+  LL_PumpFreq_420 := MapARange(
+    v:=LimRange(L1:=0.0, L2:=100.0, BD.Pump1_Perc),
+    i1:=0.0, i2:=27648.0,
+    o1:=0.0, o2:=200.0
+  );
 
-  
-  
-  
+
 END_ORGANIZATION_BLOCK
 
