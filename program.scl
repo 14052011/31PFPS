@@ -192,7 +192,7 @@ BEGIN
 	    BD.V9 := 0;
 	  END_IF;
 	
-	END_IF;
+	END_CASE;
 	
 	Step_3T := INT_TO_WORD( BD.Sub_3T_State );
 
