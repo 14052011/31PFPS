@@ -272,12 +272,13 @@ BEGIN
   ELSE
     LL_RunningLight := 0;
   END_IF;
-
   IF LL_AirPressureOK THEN
-    LL_PneumoAirPresentLight := 1;
+    LL_PneumoAirPresentLight := 0; // OK
   ELSE
-    LL_PneumoAirPresentLight := 0;
+    LL_PneumoAirPresentLight := 1; // No air
+    ErrorMsg := 4;
   END_IF;
+
 
   Step_message  := INT_TO_WORD(BD.MainState);
   Step  := INT_TO_WORD(BD.MainState);
