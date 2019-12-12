@@ -154,15 +154,9 @@ BEGIN
                          PT := T#1s,
                          Q => BD.x1);
 
-  ep_GA1_btn(
-    CLK := EnterButton1,
-  );
-  ep_GA2_btn(
-    CLK := EnterButton2,
-  );
-  ep_GA3_btn(
-    CLK := EnterButton3,
-  );
+  ep_GA1_btn(CLK := EnterButton1);
+  ep_GA2_btn(CLK := EnterButton2);
+  ep_GA3_btn(CLK := EnterButton3);
   
   CASE BD.MainState OF
   0: // Выкл
