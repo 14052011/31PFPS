@@ -49,22 +49,30 @@ END_DATA_BLOCK
 
 
 FUNCTION_BLOCK "Avg01_code"
-  VAR_IN_OUT
+  VAR_INPUT
     X:  REAL;
     t:  REAL;
     init:  BOOL;
+  END_VAR
+  VAR_OUTPUT
     Q:  REAL;
   END_VAR
+  VAR
+    Q_:  REAL;
+    t_:  REAL;
+  END_VAR
 BEGIN
-  IF #init = 1
-  THEN #Q := #X; END_IF;
+  IF #init
+  THEN #Q_ := #X; END_IF;
   
+  #t_ := #t;
   IF #t < 0.1 THEN
-    #t := 0.1;
+    #t_ := 0.1;
   END_IF;
   
-  #Q := #Q + ((#X - #Q) / #t / 10);
+  #Q_ := #Q_ + ((#X - #Q_) / #t / 10);
   
+  #Q := #Q_;
 END_FUNCTION_BLOCK
 
 DATA_BLOCK "ep_GA1_Btn"
@@ -94,8 +102,10 @@ END_DATA_BLOCK
 
 
 FUNCTION_BLOCK "EdgePulse_code"
-  VAR_IN_OUT
+  VAR_INPUT
     CLK:  BOOL;
+  END_VAR
+  VAR_OUTPUT
     Q0:  BOOL;
     Q1:  BOOL;
     Q01:  BOOL;
