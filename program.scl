@@ -157,7 +157,8 @@ BEGIN
   ep_GA1_btn(CLK := EnterButton1);
   ep_GA2_btn(CLK := EnterButton2);
   ep_GA3_btn(CLK := EnterButton3);
-  
+
+
   CASE BD.MainState OF
   0: // Выкл
     ll_V6  := 0;
