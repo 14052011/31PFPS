@@ -116,7 +116,7 @@ FUNCTION_BLOCK "EdgePulse_code"
   IF #CLK = #CLK_prev THEN
     #Q0:=0;  #Q1:=0;  #Q01:=0;
   ELSE
-    IF #CLK > #CLK_prev THEN #Q1:=1; ELSE #Q0:=1; END_IF;
+    IF #CLK THEN #Q1:=1; ELSE #Q0:=1; END_IF;
     #Q01 := 1;
     #CLK_prev := #CLK;
   END_IF;
