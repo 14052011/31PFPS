@@ -41,13 +41,6 @@ TON
 BEGIN
 END_DATA_BLOCK
 
-DATA_BLOCK "avg01_0001"
-NON_RETAIN
-"Avg01_code"
-BEGIN
-END_DATA_BLOCK
-
-
 FUNCTION_BLOCK "Avg01_code"
   VAR_INPUT
     X:  REAL;
@@ -75,6 +68,36 @@ BEGIN
   #Q := #Q_s;
 END_FUNCTION_BLOCK
 
+
+DATA_BLOCK "avg01_0001"
+NON_RETAIN
+"Avg01_code"
+BEGIN
+END_DATA_BLOCK
+
+
+FUNCTION_BLOCK "EdgePulse_code"
+  VAR_INPUT
+    CLK:  BOOL;
+  END_VAR
+  VAR_OUTPUT
+    Q0:  BOOL;
+    Q1:  BOOL;
+    Q01:  BOOL;
+  END_VAR
+  VAR
+    CLK_prev:  BOOL;
+  END_VAR
+  IF #CLK = #CLK_prev THEN
+    #Q0:=0;  #Q1:=0;  #Q01:=0;
+  ELSE
+    IF #CLK THEN #Q1:=1; ELSE #Q0:=1; END_IF;
+    #Q01 := 1;
+    #CLK_prev := #CLK;
+  END_IF;
+END_FUNCTION_BLOCK
+
+
 DATA_BLOCK "ep_GA1_Btn"
 NON_RETAIN
 "EdgePulse_code"
@@ -100,27 +123,6 @@ NON_RETAIN
 BEGIN
 END_DATA_BLOCK
 
-
-FUNCTION_BLOCK "EdgePulse_code"
-  VAR_INPUT
-    CLK:  BOOL;
-  END_VAR
-  VAR_OUTPUT
-    Q0:  BOOL;
-    Q1:  BOOL;
-    Q01:  BOOL;
-  END_VAR
-  VAR
-    CLK_prev:  BOOL;
-  END_VAR
-  IF #CLK = #CLK_prev THEN
-    #Q0:=0;  #Q1:=0;  #Q01:=0;
-  ELSE
-    IF #CLK THEN #Q1:=1; ELSE #Q0:=1; END_IF;
-    #Q01 := 1;
-    #CLK_prev := #CLK;
-  END_IF;
-END_FUNCTION_BLOCK
 
 DATA_BLOCK "BD"
 NON_RETAIN
