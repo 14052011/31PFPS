@@ -337,7 +337,7 @@ BEGIN
       
   LL_Pump1 := BD.Pump1;
   LL_PumpFreq_420 := MapARange(
-    v:=LimRange(L1:=0.0, L2:=100.0, BD.Pump1_Perc),
+    v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.Pump1_Perc),
     i1:=0.0, i2:=27648.0,
     o1:=0.0, o2:=200.0
   );
