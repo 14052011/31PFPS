@@ -335,7 +335,16 @@ BEGIN
   ll_V2a  :=  BD.V2a;
   ll_V2b  :=  BD.V2b;
   ll_V1  :=  BD.V1;
-      
+  
+  "StatusValve20.1"  := ll_V6;
+  "StatusValve20.2"  := ll_V9;
+  "StatusValve20.3"  := ll_V4;
+  "StatusValve20.4"  := ll_V7;
+  "StatusValve20.5"  := ll_V3;
+  "StatusValve20.9"  := ll_V2a;
+  "StatusValve20.8"  := ll_V2b;
+  "StatusValve20.10"  := ll_V1;
+
   LL_Pump1 := BD.Pump1;
   LL_PumpFreq_420 := REAL_TO_INT(
     MapARange(
@@ -344,6 +353,9 @@ BEGIN
       o1:=0.0, o2:=27648.0
     )
   );
+
+  StatusPump1 := LL_Pump1;
+  FreqPump1 := INT_TO_WORD(REAL_TO_INT( BD.Pump1_Perc * 10.0 ));
 
 
 END_ORGANIZATION_BLOCK
