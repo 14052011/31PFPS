@@ -564,7 +564,7 @@ BEGIN
 
   ep_MM_008(CLK := "EnterPump1");
   ep_MM_009(CLK := "EnterPump2");
-  ep_MM_010(CLK := "EnterProduktPump");
+  ep_MM_010(CLK := "EnterPump3");
   IF BD.MainState = 13 THEN
     IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;  END_IF;
     IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;  END_IF;
@@ -574,8 +574,9 @@ BEGIN
     BD.Pump2_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump2 )) / 10;
   ELSE
     LL_Pump1 := BD.Pump1;
+    LL_Pump2 := BD.Pump2;
+    LL_Pump3 := BD.Pump3;
   
-    LL_Pump2  := BD.Pump2;
     BD.Pump2_Perc  := 100;       // stop-gap
   
     FreqPump1  := INT_TO_WORD(REAL_TO_INT( BD.Pump1_Perc * 10.0 ));
@@ -584,6 +585,7 @@ BEGIN
 
   StatusPump1  := LL_Pump1;
   StatusPump2  := LL_Pump2;
+  StatusPump3  := LL_Pump3;
 
   LL_PumpFreq_420 := REAL_TO_INT(
     MapARange(
