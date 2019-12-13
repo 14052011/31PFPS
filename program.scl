@@ -338,19 +338,6 @@ BEGIN
 
 
   r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
-  IF r1 < 51.2 THEN
-    r1 := MapARange(
-      v := r1,
-      i1:=16.0, i2:=51.2,
-      o1:=9.6, o2:=44.2
-    );
-  ELSE
-    r1 := MapARange(
-      v := r1,
-      i1:=51.2, i2:=96.0,
-      o1:=44.2, o2:=90.0
-    );
-  END_IF;
   BD.t3_real := r1;
   Term3 := INT_TO_WORD(REAL_TO_INT( BD.t3_real * 10 ));
   
