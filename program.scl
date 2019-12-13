@@ -269,6 +269,8 @@ NON_RETAIN
     Pump2:  BOOL;
     Pump2_Perc:  REAL;
       
+    Pump3:  BOOL;  // hot water circuit
+      
     Sub_3T_State:  INT;
     TankLevel:  REAL;
       
