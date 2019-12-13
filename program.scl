@@ -118,6 +118,108 @@ FUNCTION_BLOCK "EdgePulse_code"
 END_FUNCTION_BLOCK
 
 
+DATA_BLOCK "ep_MM_001"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_002"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_003"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_004"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_005"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_006"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_007"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_008"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_009"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_010"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_011"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_012"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_013"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_014"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_015"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_016"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_017"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_018"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_019"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+DATA_BLOCK "ep_MM_020"
+NON_RETAIN
+"EdgePulse_code"
+BEGIN
+END_DATA_BLOCK
+
+
 DATA_BLOCK "ep_GA1_Btn"
 NON_RETAIN
 "EdgePulse_code"
@@ -164,6 +266,8 @@ NON_RETAIN
       
     Pump1:  BOOL;
     Pump1_Perc:  REAL;
+    Pump2:  BOOL;
+    Pump2_Perc:  REAL;
       
     Sub_3T_State:  INT;
     TankLevel:  REAL;
@@ -248,6 +352,7 @@ BEGIN
     
     BD.Pump1  := 0;
     BD.Pump1_Perc  := 0.0;
+    BD.Pump2  := 0;
     
     StatusButton1 := 1;
     StatusButton2 := 1;
@@ -258,7 +363,7 @@ BEGIN
       ELSIF ep_GA2_Btn.Q01 THEN
         BD.MainState := 2;
       ELSIF ep_GA3_Btn.Q01 THEN
-        ErrorMsg := 1;
+        BD.MainState := 13;
       END_IF;
     END_IF;
   
@@ -280,6 +385,7 @@ BEGIN
     
     BD.Pump1  := 1;
     BD.Pump1_Perc  := 80.0;
+    BD.Pump1  := 1;
     
     StatusButton1 := 0;
     StatusButton2 := 0;
@@ -299,6 +405,14 @@ BEGIN
     StatusButton1 := 0;
     StatusButton2 := 0;
     StatusButton3 := 0;
+  
+  13: // Ручной режим
+    StatusButton1 := 2;
+    StatusButton2 := 0;
+    StatusButton3 := 0;
+    IF ep_GA1_Btn.Q01 THEN
+      BD.MainState := 0;
+    END_IF;
   
   END_CASE;
 
@@ -413,14 +527,31 @@ BEGIN
   Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
 
-  ll_V6  :=  BD.V6;
-  ll_V9  :=  BD.V9;
-  ll_V4  :=  BD.V4;
-  ll_V7  := NOT  BD.V7;
-  ll_V3  := NOT  BD.V3;
-  ll_V2a  :=  BD.V2a;
-  ll_V2b  :=  BD.V2b;
-  ll_V1  :=  BD.V1;
+  ep_MM_001(CLK := "EnterValve20.1");
+  ep_MM_002(CLK := "EnterValve20.2");
+  ep_MM_003(CLK := "EnterValve20.3");
+  ep_MM_004(CLK := "EnterValve20.4");
+  ep_MM_005(CLK := "EnterValve20.5");
+  ep_MM_006(CLK := "EnterValve20.8" OR "EnterValve20.9");
+  ep_MM_007(CLK := "EnterValve20.10");
+  IF BD.MainState = 13 THEN
+    IF ep_MM_001.Q01 THEN IF ll_V6 THEN ll_V6 := 0; ELSE ll_V6 := 1; END_IF;;  END_IF;
+    IF ep_MM_002.Q01 THEN IF ll_V9 THEN ll_V9 := 0; ELSE ll_V9 := 1; END_IF;;  END_IF;
+    IF ep_MM_003.Q01 THEN IF ll_V4 THEN ll_V4 := 0; ELSE ll_V4 := 1; END_IF;;  END_IF;
+    IF ep_MM_004.Q01 THEN IF ll_V7 THEN ll_V7 := 0; ELSE ll_V7 := 1; END_IF;;  END_IF;
+    IF ep_MM_005.Q01 THEN IF ll_V3 THEN ll_V3 := 0; ELSE ll_V3 := 1; END_IF;;  END_IF;
+    IF ep_MM_006.Q01 THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF;; ll_V2b := NOT ll_V2a;  END_IF;
+    IF ep_MM_007.Q01 THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;;  END_IF;
+  ELSE
+    ll_V6  :=  BD.V6;
+    ll_V9  :=  BD.V9;
+    ll_V4  :=  BD.V4;
+    ll_V7  := NOT  BD.V7;
+    ll_V3  := NOT  BD.V3;
+    ll_V2a  :=  BD.V2a;
+    ll_V2b  :=  BD.V2b;
+    ll_V1  :=  BD.V1;
+  END_IF;
   
   "StatusValve20.1"  := ll_V6;
   "StatusValve20.2"  := ll_V9;
@@ -431,7 +562,29 @@ BEGIN
   "StatusValve20.8"  := ll_V2b;
   "StatusValve20.10"  := ll_V1;
 
-  LL_Pump1 := BD.Pump1;
+  ep_MM_008(CLK := "EnterPump1");
+  ep_MM_009(CLK := "EnterPump2");
+  ep_MM_010(CLK := "EnterProduktPump");
+  IF BD.MainState = 13 THEN
+    IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;;  END_IF;
+    IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;;  END_IF;
+    IF ep_MM_008.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;;  END_IF;
+  
+    BD.Pump1_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump1 )) / 10;
+    BD.Pump2_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump2 )) / 10;
+  ELSE
+    LL_Pump1 := BD.Pump1;
+  
+    LL_Pump2  := BD.Pump2;
+    BD.Pump2_Perc  := 100;       // stop-gap
+  
+    FreqPump1  := INT_TO_WORD(REAL_TO_INT( BD.Pump1_Perc * 10.0 ));
+    FreqPump2  := INT_TO_WORD(REAL_TO_INT( BD.Pump2_Perc * 10.0 ));
+  END_IF;
+
+  StatusPump1  := LL_Pump1;
+  StatusPump2  := LL_Pump2;
+
   LL_PumpFreq_420 := REAL_TO_INT(
     MapARange(
       v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.Pump1_Perc),
@@ -439,9 +592,6 @@ BEGIN
       o1:=0.0, o2:=27648.0
     )
   );
-
-  StatusPump1 := LL_Pump1;
-  FreqPump1 := INT_TO_WORD(REAL_TO_INT( BD.Pump1_Perc * 10.0 ));
 
 
 END_ORGANIZATION_BLOCK
