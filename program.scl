@@ -535,13 +535,13 @@ BEGIN
   ep_MM_006(CLK := "EnterValve20.8" OR "EnterValve20.9");
   ep_MM_007(CLK := "EnterValve20.10");
   IF BD.MainState = 13 THEN
-    IF ep_MM_001.Q01 THEN IF ll_V6 THEN ll_V6 := 0; ELSE ll_V6 := 1; END_IF;;  END_IF;
-    IF ep_MM_002.Q01 THEN IF ll_V9 THEN ll_V9 := 0; ELSE ll_V9 := 1; END_IF;;  END_IF;
-    IF ep_MM_003.Q01 THEN IF ll_V4 THEN ll_V4 := 0; ELSE ll_V4 := 1; END_IF;;  END_IF;
-    IF ep_MM_004.Q01 THEN IF ll_V7 THEN ll_V7 := 0; ELSE ll_V7 := 1; END_IF;;  END_IF;
-    IF ep_MM_005.Q01 THEN IF ll_V3 THEN ll_V3 := 0; ELSE ll_V3 := 1; END_IF;;  END_IF;
-    IF ep_MM_006.Q01 THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF;; ll_V2b := NOT ll_V2a;  END_IF;
-    IF ep_MM_007.Q01 THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;;  END_IF;
+    IF ep_MM_001.Q01 THEN IF ll_V6 THEN ll_V6 := 0; ELSE ll_V6 := 1; END_IF;  END_IF;
+    IF ep_MM_002.Q01 THEN IF ll_V9 THEN ll_V9 := 0; ELSE ll_V9 := 1; END_IF;  END_IF;
+    IF ep_MM_003.Q01 THEN IF ll_V4 THEN ll_V4 := 0; ELSE ll_V4 := 1; END_IF;  END_IF;
+    IF ep_MM_004.Q01 THEN IF ll_V7 THEN ll_V7 := 0; ELSE ll_V7 := 1; END_IF;  END_IF;
+    IF ep_MM_005.Q01 THEN IF ll_V3 THEN ll_V3 := 0; ELSE ll_V3 := 1; END_IF;  END_IF;
+    IF ep_MM_006.Q01 THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF; ll_V2b := NOT ll_V2a;  END_IF;
+    IF ep_MM_007.Q01 THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;  END_IF;
   ELSE
     ll_V6  :=  BD.V6;
     ll_V9  :=  BD.V9;
@@ -566,9 +566,9 @@ BEGIN
   ep_MM_009(CLK := "EnterPump2");
   ep_MM_010(CLK := "EnterProduktPump");
   IF BD.MainState = 13 THEN
-    IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;;  END_IF;
-    IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;;  END_IF;
-    IF ep_MM_008.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;;  END_IF;
+    IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;  END_IF;
+    IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;  END_IF;
+    IF ep_MM_008.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;  END_IF;
   
     BD.Pump1_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump1 )) / 10;
     BD.Pump2_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump2 )) / 10;
