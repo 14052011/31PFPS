@@ -351,11 +351,15 @@ BEGIN
   CASE BD.MainState OF
   0: // Выкл / RESET ALL
     BD.V6  := 0;
+    BD.V6_Perc  := 0;
     BD.Sub_3T_State  := 0;
     BD.V4  := 0;
     BD.V7  := 0;
     BD.V3  := 0;
     BD.V1  := 0;
+    
+    BD.Vhs  := 0;
+    BD.Vhs_Perc  := 0;
     
     BD.Pump1  := 0;
     BD.Pump1_Perc  := 0.0;
