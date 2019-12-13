@@ -83,6 +83,18 @@ NON_RETAIN
 BEGIN
 END_DATA_BLOCK
 
+DATA_BLOCK "avg01_0002"
+NON_RETAIN
+"Avg01_code"
+BEGIN
+END_DATA_BLOCK
+
+DATA_BLOCK "avg01_0003"
+NON_RETAIN
+"Avg01_code"
+BEGIN
+END_DATA_BLOCK
+
 
 FUNCTION_BLOCK "EdgePulse_code"
   VAR_INPUT
@@ -344,7 +356,7 @@ BEGIN
     avg01_0001(
       init  := 0,
       X  := r1,
-      t  := 3,
+      t  := 4,
       Q  => BD.TankLevel
     );
   END_IF;
@@ -355,7 +367,15 @@ BEGIN
   r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
 
 
-  BD.t3_real := r1;
+  IF dtclk.Q THEN
+    avg01_0002(
+      init  := 0,
+      X  := r1,
+      t  := 2,
+      Q  => BD.t3_real
+    );
+  END_IF;
+
   Term3 := INT_TO_WORD(REAL_TO_INT( BD.t3_real * 10 ));
   
   r1 := LimRange(
@@ -381,7 +401,15 @@ BEGIN
     );
   END_IF;
 
-  BD.t4_real := r1;
+  IF dtclk.Q THEN
+    avg01_0003(
+      init  := 0,
+      X  := r1,
+      t  := 2,
+      Q  => BD.t4_real
+    );
+  END_IF;
+
   Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
 
