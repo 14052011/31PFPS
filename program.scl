@@ -264,6 +264,11 @@ NON_RETAIN
     V2b:  BOOL;
     V1:  BOOL;
       
+    V6_Perc:  REAL;
+      
+    Vhs:  BOOL;
+    Vhs_Perc:  REAL;
+      
     Pump1:  BOOL;
     Pump1_Perc:  REAL;
     Pump2:  BOOL;
@@ -528,22 +533,22 @@ BEGIN
 
   Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
-
   ep_MM_001(CLK := "EnterValve20.1");
   ep_MM_002(CLK := "EnterValve20.2");
   ep_MM_003(CLK := "EnterValve20.3");
   ep_MM_004(CLK := "EnterValve20.4");
   ep_MM_005(CLK := "EnterValve20.5");
-  ep_MM_006(CLK := "EnterValve20.8" OR "EnterValve20.9");
-  ep_MM_007(CLK := "EnterValve20.10");
+  ep_MM_006(CLK := "EnterValve20.8");
+  ep_MM_007(CLK := "EnterValve20.9");
+  ep_MM_008(CLK := "EnterValve20.10");
   IF BD.MainState = 13 THEN
-    IF ep_MM_001.Q01 THEN IF ll_V6 THEN ll_V6 := 0; ELSE ll_V6 := 1; END_IF;  END_IF;
-    IF ep_MM_002.Q01 THEN IF ll_V9 THEN ll_V9 := 0; ELSE ll_V9 := 1; END_IF;  END_IF;
-    IF ep_MM_003.Q01 THEN IF ll_V4 THEN ll_V4 := 0; ELSE ll_V4 := 1; END_IF;  END_IF;
-    IF ep_MM_004.Q01 THEN IF ll_V7 THEN ll_V7 := 0; ELSE ll_V7 := 1; END_IF;  END_IF;
-    IF ep_MM_005.Q01 THEN IF ll_V3 THEN ll_V3 := 0; ELSE ll_V3 := 1; END_IF;  END_IF;
-    IF ep_MM_006.Q01 THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF; ll_V2b := NOT ll_V2a;  END_IF;
-    IF ep_MM_007.Q01 THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;  END_IF;
+    IF ep_MM_001.Q01  THEN IF ll_V6 THEN ll_V6 := 0; ELSE ll_V6 := 1; END_IF;  END_IF;
+    IF ep_MM_002.Q01  THEN IF ll_V9 THEN ll_V9 := 0; ELSE ll_V9 := 1; END_IF;  END_IF;
+    IF ep_MM_003.Q01  THEN IF ll_V4 THEN ll_V4 := 0; ELSE ll_V4 := 1; END_IF;  END_IF;
+    IF ep_MM_004.Q01  THEN IF ll_V7 THEN ll_V7 := 0; ELSE ll_V7 := 1; END_IF;  END_IF;
+    IF ep_MM_005.Q01  THEN IF ll_V3 THEN ll_V3 := 0; ELSE ll_V3 := 1; END_IF;  END_IF;
+    IF ep_MM_006.Q01 OR ep_MM_007.Q01  THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF; ll_V2b := NOT ll_V2a;  END_IF;
+    IF ep_MM_008.Q01  THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;  END_IF;
   ELSE
     ll_V6  :=  BD.V6;
     ll_V9  :=  BD.V9;
@@ -564,13 +569,13 @@ BEGIN
   "StatusValve20.8"  := ll_V2b;
   "StatusValve20.10"  := ll_V1;
 
-  ep_MM_008(CLK := "EnterPump1");
-  ep_MM_009(CLK := "EnterPump2");
-  ep_MM_010(CLK := "EnterPump3");
+  ep_MM_009(CLK := "EnterPump1");
+  ep_MM_010(CLK := "EnterPump2");
+  ep_MM_011(CLK := "EnterPump3");
   IF BD.MainState = 13 THEN
-    IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;  END_IF;
-    IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;  END_IF;
-    IF ep_MM_010.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;  END_IF;
+    IF ep_MM_009.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;  END_IF;
+    IF ep_MM_010.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;  END_IF;
+    IF ep_MM_011.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;  END_IF;
   
     BD.Pump1_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump1 )) / 10;
     BD.Pump2_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump2 )) / 10;
@@ -592,6 +597,42 @@ BEGIN
   LL_PumpFreq_420 := REAL_TO_INT(
     MapARange(
       v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.Pump1_Perc),
+      i1:=0.0, i2:=100.0,
+      o1:=0.0, o2:=27648.0
+    )
+  );
+
+  IF BD.MainState = 13 THEN
+    BD.V6_Perc := INT_TO_REAL(WORD_TO_INT( PercValveProdukt )) / 10;
+  ELSE
+    PercValveProdukt := INT_TO_WORD(REAL_TO_INT( BD.V6_Perc * 10.0 ));
+  END_IF;
+
+  LL_V6_420 := REAL_TO_INT(
+    MapARange(
+      v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.V6_Perc),
+      i1:=0.0, i2:=100.0,
+      o1:=0.0, o2:=27648.0
+    )
+  );
+
+  ep_MM_012(CLK := "EnterValve15");
+  ep_MM_013(CLK := "EnterValve_6.1");
+  IF BD.MainState = 13 THEN
+    IF ep_MM_012.Q01 THEN IF ll_V15 THEN ll_V15 := 0; ELSE ll_V15 := 1; END_IF; END_IF;
+    IF ep_MM_013.Q01 THEN IF ll_V61 THEN ll_V61 := 0; ELSE ll_V61 := 1; END_IF; END_IF;
+  
+    BD.Vhs_Perc := INT_TO_REAL(WORD_TO_INT( PercValveSteam )) / 10;
+  ELSE
+    ll_V15 := BD.Vhs;
+    ll_V61 := BD.Vhs;
+  
+    PercValveSteam := INT_TO_WORD(REAL_TO_INT( BD.Vhs_Perc * 10.0 ));
+  END_IF;
+
+  LL_Steam_420 := REAL_TO_INT(
+    MapARange(
+      v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.Vhs_Perc),
       i1:=0.0, i2:=100.0,
       o1:=0.0, o2:=27648.0
     )
