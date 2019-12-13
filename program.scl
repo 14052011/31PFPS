@@ -344,7 +344,7 @@ BEGIN
     avg01_0001(
       init  := 0,
       X  := r1,
-      t  := 1.2,
+      t  := 3,
       Q  => BD.TankLevel
     );
   END_IF;
