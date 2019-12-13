@@ -570,7 +570,7 @@ BEGIN
   IF BD.MainState = 13 THEN
     IF ep_MM_008.Q01 THEN IF LL_Pump1 THEN LL_Pump1 := 0; ELSE LL_Pump1 := 1; END_IF;  END_IF;
     IF ep_MM_009.Q01 THEN IF LL_Pump2 THEN LL_Pump2 := 0; ELSE LL_Pump2 := 1; END_IF;  END_IF;
-    IF ep_MM_008.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;  END_IF;
+    IF ep_MM_010.Q01 THEN IF LL_Pump3 THEN LL_Pump3 := 0; ELSE LL_Pump3 := 1; END_IF;  END_IF;
   
     BD.Pump1_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump1 )) / 10;
     BD.Pump2_Perc := INT_TO_REAL(WORD_TO_INT( FreqPump2 )) / 10;
