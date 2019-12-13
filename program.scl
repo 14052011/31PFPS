@@ -638,6 +638,9 @@ BEGIN
     )
   );
 
+  "StatusValve15"  := ll_V15;
+  "StatusValve61"  := ll_V61;
+
 
 END_ORGANIZATION_BLOCK
 
