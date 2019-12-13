@@ -35,11 +35,19 @@ TOF
 BEGIN
 END_DATA_BLOCK
 
+
+DATA_BLOCK "dtclk"
+NON_RETAIN
+TON
+BEGIN
+END_DATA_BLOCK
+
 DATA_BLOCK "t2"
 NON_RETAIN
 TON
 BEGIN
 END_DATA_BLOCK
+
 
 FUNCTION_BLOCK "Avg01_code"
   VAR_INPUT
@@ -173,11 +181,6 @@ BEGIN
 
 
 
-
-
-
-
-
   t1.TON(IN := NOT BD.x1,
                        PT := T#2s,
                        Q => BD.x1);
@@ -185,6 +188,9 @@ BEGIN
   t2.TOF(IN := t1.Q,
                          PT := T#1s,
                          Q => BD.x1);
+
+  dtclk.TON(PT:=T#100ms, IN:= NOT dtclk.Q);   (* impulse generator idiom *)
+
 
   ep_GA1_btn(CLK := EnterButton1);
   ep_GA2_btn(CLK := EnterButton2);
@@ -333,11 +339,22 @@ BEGIN
       o1:=0.0, o2:=100.0
     )
   );
-  BD.TankLevel := r1;
+
+  IF dtclk.Q THEN
+    avg01_0001(
+      init  := 0,
+      X  := r1,
+      t  := 1.2,
+      Q  => BD.TankLevel
+    );
+  END_IF;
+
   PercVolume := INT_TO_WORD(REAL_TO_INT( BD.TankLevel * 10 ));
 
 
   r1 := INT_TO_REAL(LL_t3_e1) / 10.0;
+
+
   BD.t3_real := r1;
   Term3 := INT_TO_WORD(REAL_TO_INT( BD.t3_real * 10 ));
   
@@ -349,6 +366,7 @@ BEGIN
       o1:=0.0, o2:=200.0
     )
   );
+
   IF r1 < 45.0 THEN
     r1 := MapARange(
       v := r1,
@@ -362,6 +380,7 @@ BEGIN
       o1:=44.2, o2:=90.0
     );
   END_IF;
+
   BD.t4_real := r1;
   Term4 := INT_TO_WORD(REAL_TO_INT( BD.t4_real * 10 ));
   
