@@ -436,7 +436,7 @@ BEGIN
         BD.Vhs    := 0;
         BD.Vhs_Perc    := 0;
         BD.t3_SP    := 0;
-        BD_.t3_heating    := 0;
+        BD.t3_heating    := 0;
         BD.Pump1    := 0;
         BD.Pump1_Perc    := 0.0;
         BD.Pump2    := 0;
