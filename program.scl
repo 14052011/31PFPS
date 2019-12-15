@@ -297,7 +297,7 @@ BEGIN
             v := #CZQ,
             i1:=#CZQ_min,    i2:=#CZQ_max,
             o1:=0.0,    o2:=#k5_max
-        )
+        );
         IF #k5 > k5_max    THEN    #k5 := #k5_max;
         #avgA := #avgA + ((#A - #avgA) * #t5)
         #E  := #A - #SP;
@@ -307,13 +307,13 @@ BEGIN
                 v := #E,
                 i1:=0.0,    i2:=#E_P1,
                 o1:=0.0,    o2:=#k3_P1
-            )
+            );
         ELSE
             #k3 := MapARange(
                 v := #E,
                 i1:=#E_P1,    i2:=#E_P2,
                 o1:=#k3_P1,    o2:=#k3_P2
-            )
+            );
         END_IF;
         IF #mode = 1 THEN
             #Q3 := #Q3 - (#E5 * #k3);
