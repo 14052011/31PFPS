@@ -526,8 +526,8 @@ BEGIN
     END_IF;
     Step_message    := INT_TO_WORD(BD.MainState);
     Step    := INT_TO_WORD(BD.MainState);
-    TimeLeft := kt19_0001.L;
-    TimePast := kt19_0001.E;
+    TimeLeft := DINT_TO_INT(kt19_0001.L / 1000);
+    TimePast := DINT_TO_INT(kt19_0001.E / 1000);
     PercVolumeData := INT_TO_WORD( LL_Level_420 );
     r1 := INT_TO_REAL(LL_Level_420);
     r1 := LimRange(
