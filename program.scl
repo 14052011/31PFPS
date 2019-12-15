@@ -492,7 +492,7 @@ BEGIN
         BD.V3    := 1;
         BD.t3_SP    := 95;
         BD.t3_heating    := 1;
-        IF BD.t3_real > BD.t3_SP - 3.0 THEN
+        IF BD.t4_real > 85 THEN
             BD.MainState := 4;
         END_IF;
         StatusButton1 := 0;
