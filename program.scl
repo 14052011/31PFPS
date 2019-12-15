@@ -300,11 +300,11 @@ BEGIN
             i1:=#CZQ_min,    i2:=#CZQ_max,
             o1:=0.0,    o2:=#k5_max
         );
-        IF #k5 > k5_max    THEN    #k5 := #k5_max;
+        #k5 := LimRange(L1:=0, L2:=#k5_max, v:=#k5);
         #avgA := #avgA + ((#A - #avgA) * #t5);
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
-        IF ABS(#E < #E_P1) THEN
+        IF ABS(#E) < #E_P1 THEN
             #k3 := MapARange(
                 v := #E,
                 i1:=0.0,    i2:=#E_P1,
