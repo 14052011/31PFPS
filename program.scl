@@ -224,6 +224,8 @@ NON_RETAIN
         x1:    Bool;
         MainState:    INT;
         t3_real:    REAL;
+        t3_SP:    REAL;
+        t3_heating:    BOOL;
         t4_real:    REAL;
         V6:    BOOL;
         V9:    BOOL;
@@ -251,6 +253,8 @@ FUNCTION_BLOCK "Reg35P_code"
     VAR_INPUT
         A:    REAL;    
         SP:    REAL;    
+        enable:    BOOL;
+        off_value:    REAL;    
         mode:    INT;    
         kp:    REAL;    
         k3_P1:    REAL;
@@ -259,8 +263,8 @@ FUNCTION_BLOCK "Reg35P_code"
         E_P2:    REAL;
         t5:    REAL;    
         k5_max:    REAL;    
-        CZQ_min:    REAL;    
-        CZQ_max:    REAL;    
+        CZQ_k5low:    REAL;    
+        CZQ_k5high:    REAL;    
         CZ_t:    REAL;    
     END_VAR
     VAR_OUTPUT
@@ -297,7 +301,7 @@ BEGIN
         #CZQ := #CZQ + ((#CZQ_s - #CZQ) * CZ_t);
         #k5 := MapARange(
             v := #CZQ,
-            i1:=#CZQ_min,    i2:=#CZQ_max,
+            i1:=#CZQ_k5low,    i2:=#CZQ_k5high,
             o1:=0.0,    o2:=#k5_max
         );
         #k5 := LimRange(L1:=0, L2:=#k5_max, v:=#k5);
@@ -323,6 +327,10 @@ BEGIN
         ELSE
             #Q3    := #Q3 + (#E5 * #k3);
             #Q_full    := #Q3 + (#E * #kp);
+        END_IF;
+        IF NOT enable THEN
+            #Q3    := #off_value;
+            #Q_full    := #off_value;
         END_IF;
         #Q3 := LimRange(L1:=0, L2:=100, v:=#Q3);
         #Q  := LimRange(L1:=0, L2:=100, v:=#Q_full);
@@ -489,7 +497,7 @@ BEGIN
         avg01_0001(
             init    := 0,
             X    := r1,
-            t    := 4,
+            t    := 2,
             Q    => BD.TankLevel
         );
     END_IF;
@@ -504,7 +512,7 @@ BEGIN
         avg01_0002(
             init    := 0,
             X    := r1,
-            t    := 2,
+            t    := 1,
             Q    => BD.t3_real
         );
     END_IF;
@@ -534,7 +542,7 @@ BEGIN
         avg01_0003(
             init    := 0,
             X    := r1,
-            t    := 2,
+            t    := 1,
             Q    => BD.t4_real
         );
     END_IF;
@@ -632,4 +640,34 @@ BEGIN
     );
     "StatusValve15"    := ll_V15;
     "StatusValve61"    := ll_V61;
+        reg35P_0001(
+            A    := MapARange(
+                    v := BD.t3_real,
+                    i1:=0.0,    i2:=150.0,
+                    o1:=0.0,    o2:=100.0        
+                ),
+            SP    := MapARange(
+                    v := BD.t3_SP,
+                    i1:=0.0,    i2:=150.0,
+                    o1:=0.0,    o2:=100.0        
+                ),
+            mode    := 1,
+            enable    := BD.t3_heating,
+            off_value    := 0.0,
+            kp    := 0.0,
+            k3_P1    := 0.01,        
+            k3_P2    := 0.1,        
+            E_P1    := 1.5,
+            E_P2    := 10.0,
+            t5    := 4.0,
+            k5_max    := 1,        
+            CZQ_k5low    := 5,
+            CZQ_k5high    := 100,
+            CZ_t    := 20.0,
+        );
+        Vhs_Perc := MapARange(
+            v := reg35P_0001.Q,
+            i1:=0.0,    i2:=100.0,        
+            o1:=0.0,    o2:=100.0
+        );
 END_ORGANIZATION_BLOCK
