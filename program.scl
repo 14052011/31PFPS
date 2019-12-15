@@ -477,7 +477,7 @@ BEGIN
         BD.Pump1    := 1;
         BD.Pump1_Perc    := 100.0;
         BD.Pump2    := 1;
-        kt19_0001(xReset:=0, T:=T#20s);
+        kt19_0001(xReset:=0, T:=T#100s);
         IF kt19_0001.xEnd THEN
             kt19_0001(xReset:=1, T:=T#0s);
             BD.MainState := 3;
