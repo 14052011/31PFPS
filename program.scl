@@ -435,6 +435,8 @@ BEGIN
         BD.V1    := 0;
         BD.Vhs    := 0;
         BD.Vhs_Perc    := 0;
+        BD.t3_SP    := 0;
+        BD_.t3_heating    := 0;
         BD.Pump1    := 0;
         BD.Pump1_Perc    := 0.0;
         BD.Pump2    := 0;
@@ -471,22 +473,48 @@ BEGIN
         kt19_0001(xReset:=0, T:=T#20s);
         IF kt19_0001.xEnd THEN
             kt19_0001(xReset:=1, T:=T#0s);
-            BD.MainState := 0;
+            BD.MainState := 3;
         END_IF;
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 0;
     3: 
+        BD.V6    := 0;
+        BD.V4    := 0;
+        BD.V7    := 0;
+        BD.V3    := 1;
+        BD.t3_SP    := 95;
+        BD_.t3_heating    := 1;
+        IF BD.t3_real > BD.t3_SP - 3.0 THEN
+            BD.MainState := 4;
+        END_IF;
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 0;
     4: 
+        BD.V6    := 0;
+        BD.V4    := 0;
+        BD.V7    := 0;
+        BD.V3    := 1;
+        BD.t3_SP    := 95;
+        BD_.t3_heating    := 1;
+        kt19_0001(xReset:=0, T:=T#300s);
+        IF kt19_0001.xEnd THEN
+            kt19_0001(xReset:=1, T:=T#0s);
+            BD.MainState := 5;
+        END_IF;
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 0;
     5: 
-        StatusButton1 := 0;
-        StatusButton2 := 0;
+        BD.V6    := 0;
+        BD.V4    := 0;
+        BD.V7    := 0;
+        BD.V3    := 1;
+        BD.t3_SP    := 88;
+        BD_.t3_heating    := 1;
+        StatusButton1 := 2;
+        StatusButton2 := 3;
         StatusButton3 := 0;
     13: 
         StatusButton1 := 2;
