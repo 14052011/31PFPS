@@ -78,6 +78,11 @@ NON_RETAIN
 "Avg01_code"
 BEGIN
 END_DATA_BLOCK
+DATA_BLOCK "avg01_0004"
+NON_RETAIN
+"Avg01_code"
+BEGIN
+END_DATA_BLOCK
 FUNCTION_BLOCK "EdgePulse_code"
     VAR_INPUT
         CLK:    BOOL;
@@ -245,6 +250,7 @@ NON_RETAIN
         Pump3:    BOOL;    
         Sub_3T_State:    INT;
         TankLevel:    REAL;
+        Flow:    REAL;
         Sub_2SC_State:    INT;
     END_STRUCT;
 BEGIN
@@ -440,6 +446,7 @@ BEGIN
         BD.Pump1    := 0;
         BD.Pump1_Perc    := 0.0;
         BD.Pump2    := 0;
+        BD.Pump3    := 0;
         kt19_0001(xReset:=1, T:=T#0s);
         StatusButton1 := 1;
         StatusButton2 := 1;
@@ -556,6 +563,23 @@ BEGIN
     Step    := INT_TO_WORD(BD.MainState);
     TimeLeft := DINT_TO_INT(kt19_0001.L / 1000);
     TimePast := DINT_TO_INT(kt19_0001.E / 1000);
+    r1 := LimRange(
+        L1:=0.0, L2:=250.0,
+        v:=MapARange(
+            v := INT_TO_REAL(LL_Flow_420),
+            i1:=0.0, i2:=27648.0,
+            o1:=0.0, o2:=20.25
+        )
+    );
+    IF dtclk.Q THEN
+        avg01_0004(
+            init    := 0,
+            X    := r1,
+            t    := 1,
+            Q    => BD.Flow
+        );
+    END_IF;
+    Flow := INT_TO_WORD(REAL_TO_INT( BD.Flow * 10 ));
     PercVolumeData := INT_TO_WORD( LL_Level_420 );
     r1 := INT_TO_REAL(LL_Level_420);
     r1 := LimRange(
@@ -743,4 +767,5 @@ BEGIN
             i1:=0.0,    i2:=100.0,        
             o1:=0.0,    o2:=100.0
         );
+        BD.Pump3 := BD.t3_heating;
 END_ORGANIZATION_BLOCK
