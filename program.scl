@@ -275,6 +275,7 @@ FUNCTION_BLOCK "Reg35P_code"
         Q3:    REAL;
         CZ_above1below0:    INT;
         CZQ:    REAL;
+        CZQ_s:    REAL;
         CZ_cnt:    REAL;
         CZ_cnt_prev:    REAL;
     END_VAR
@@ -299,7 +300,7 @@ BEGIN
             o1:=0.0,    o2:=#k5_max
         );
         IF #k5 > k5_max    THEN    #k5 := #k5_max;
-        #avgA := #avgA + ((#A - #avgA) * #t5)
+        #avgA := #avgA + ((#A - #avgA) * #t5);
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
         IF ABS(#E < #E_P1) THEN
