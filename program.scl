@@ -484,7 +484,7 @@ BEGIN
         BD.V7    := 0;
         BD.V3    := 1;
         BD.t3_SP    := 95;
-        BD_.t3_heating    := 1;
+        BD.t3_heating    := 1;
         IF BD.t3_real > BD.t3_SP - 3.0 THEN
             BD.MainState := 4;
         END_IF;
@@ -497,7 +497,7 @@ BEGIN
         BD.V7    := 0;
         BD.V3    := 1;
         BD.t3_SP    := 95;
-        BD_.t3_heating    := 1;
+        BD.t3_heating    := 1;
         kt19_0001(xReset:=0, T:=T#300s);
         IF kt19_0001.xEnd THEN
             kt19_0001(xReset:=1, T:=T#0s);
@@ -512,7 +512,7 @@ BEGIN
         BD.V7    := 0;
         BD.V3    := 1;
         BD.t3_SP    := 88;
-        BD_.t3_heating    := 1;
+        BD.t3_heating    := 1;
         StatusButton1 := 2;
         StatusButton2 := 3;
         StatusButton3 := 0;
