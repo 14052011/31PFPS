@@ -341,6 +341,43 @@ NON_RETAIN
 "Reg35P_code"
 BEGIN
 END_DATA_BLOCK
+FUNCTION_BLOCK "KT19_code"
+    VAR_INPUT
+        xReset:    BOOL;
+        T:    TIME;
+    END_VAR
+    VAR_OUTPUT
+        xEnd:    BOOL;
+        E:    TIME;
+        L:    TIME;
+    END_VAR
+    VAR
+        step:    TIME := T#100ms;
+        xEnd_s:    BOOL;
+        E_s:    TIME;
+    END_VAR
+BEGIN
+    IF #xReset THEN
+        #E_s    := T#0s;
+        #xEnd_s    := 0;
+    END_IF
+    IF #xEnd_s THEN #xEnd_s := 0; END_IF;
+    IF dtclk.Q THEN
+        #E_s := #E_s + #step;
+        IF #E_s >= #T THEN
+            #xEnd_s    := 1;
+            #E_s    := T#0s;
+        END_IF
+    END_IF;
+    #xEnd    := #xEnd_s;
+    #E    := #E_s;
+    #L    := #T - #E_s;
+END_FUNCTION_BLOCK
+DATA_BLOCK "kt19_0001"
+NON_RETAIN
+"KT19_code"
+BEGIN
+END_DATA_BLOCK
 ORGANIZATION_BLOCK "Main"
    VAR_TEMP 
       OB1_EV_CLASS : Byte;   
@@ -401,6 +438,7 @@ BEGIN
         BD.Pump1    := 0;
         BD.Pump1_Perc    := 0.0;
         BD.Pump2    := 0;
+        kt19_0001(xReset:=1, T:=T#0s);
         StatusButton1 := 1;
         StatusButton2 := 1;
         StatusButton3 := 1;
@@ -428,8 +466,13 @@ BEGIN
         BD.V3    := 0;
         BD.V1    := 0;
         BD.Pump1    := 1;
-        BD.Pump1_Perc    := 80.0;
-        BD.Pump1    := 1;
+        BD.Pump1_Perc    := 100.0;
+        BD.Pump2    := 1;
+        kt19_0001(xReset:=0, T:=T#20s);
+        IF kt19_0001.xEnd THEN
+            kt19_0001(xReset:=1, T:=T#0s);
+            BD.MainState := 0;
+        END_IF;
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 0;
@@ -483,6 +526,8 @@ BEGIN
     END_IF;
     Step_message    := INT_TO_WORD(BD.MainState);
     Step    := INT_TO_WORD(BD.MainState);
+    TimeLeft := kt19_0001.L;
+    TimePast := kt19_0001.E;
     PercVolumeData := INT_TO_WORD( LL_Level_420 );
     r1 := INT_TO_REAL(LL_Level_420);
     r1 := LimRange(
