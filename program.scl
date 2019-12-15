@@ -765,10 +765,10 @@ BEGIN
             E_P1    := 0.5,
             E_P2    := 15.0,
             t5    := 10,
-            k5_max    := 350,        
-            CZQ_k5low    := 5,
-            CZQ_k5high    := 100,
-            CZ_t    := 20.0
+            k5_max    := 270,        
+            CZQ_k5low    := 10,
+            CZQ_k5high    := 200,
+            CZ_t    := 10.0
         );
         BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
