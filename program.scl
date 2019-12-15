@@ -315,17 +315,17 @@ BEGIN
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
         IF ABS(#E) < #E_P1 THEN
-            #k3 := MapARange(
+            #k3 := ABS(MapARange(
                 v := #E,
                 i1:=0.0,    i2:=#E_P1,
                 o1:=0.0,    o2:=#k3_P1
-            );
+            ));
         ELSE
-            #k3 := MapARange(
+            #k3 := ABS(MapARange(
                 v := #E,
                 i1:=#E_P1,    i2:=#E_P2,
                 o1:=#k3_P1,    o2:=#k3_P2
-            );
+            ));
         END_IF;
         IF #mode = 1 THEN
             #Q3    := #Q3 - (#E5 * #k3);
