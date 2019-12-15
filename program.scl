@@ -360,14 +360,14 @@ BEGIN
     IF #xReset THEN
         #E_s    := T#0s;
         #xEnd_s    := 0;
-    END_IF
+    END_IF;
     IF #xEnd_s THEN #xEnd_s := 0; END_IF;
     IF dtclk.Q THEN
         #E_s := #E_s + #step;
         IF #E_s >= #T THEN
             #xEnd_s    := 1;
             #E_s    := T#0s;
-        END_IF
+        END_IF;
     END_IF;
     #xEnd    := #xEnd_s;
     #E    := #E_s;
