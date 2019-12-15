@@ -298,7 +298,7 @@ BEGIN
             #CZ_cnt    := 0;
         END_IF;
         #CZ_cnt := #CZ_cnt + 1;
-        IF #CZ_cnt > 1000000 THEN #CZ_cnt := 1000000; END_IF;
+        IF #CZ_cnt > 100000 THEN #CZ_cnt := 100000; END_IF;
         IF #CZ_cnt > #CZ_cnt_prev THEN
             #CZQ_s    := #CZ_cnt;
         END_IF;
@@ -583,7 +583,7 @@ BEGIN
         avg01_0004(
             init    := 0,
             X    := r1,
-            t    := 1,
+            t    := 4,
             Q    => BD.Flow
         );
     END_IF;
