@@ -663,9 +663,9 @@ BEGIN
             k5_max    := 1,        
             CZQ_k5low    := 5,
             CZQ_k5high    := 100,
-            CZ_t    := 20.0,
+            CZ_t    := 20.0
         );
-        Vhs_Perc := MapARange(
+        BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
             i1:=0.0,    i2:=100.0,        
             o1:=0.0,    o2:=100.0
