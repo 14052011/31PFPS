@@ -765,7 +765,7 @@ BEGIN
             E_P1    := 0.5,
             E_P2    := 15.0,
             t5    := 10,
-            k5_max    := 300,        
+            k5_max    := 200,        
             CZQ_k5low    := 5,
             CZQ_k5high    := 100,
             CZ_t    := 20.0
