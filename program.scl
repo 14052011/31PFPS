@@ -273,6 +273,7 @@ FUNCTION_BLOCK "Reg35P_code"
         k3:    REAL;
         k5:    REAL;
         Q3:    REAL;
+        Q_full:    REAL;
         CZ_above1below0:    INT;
         CZQ:    REAL;
         CZQ_s:    REAL;
@@ -317,16 +318,14 @@ BEGIN
             );
         END_IF;
         IF #mode = 1 THEN
-            #Q3 := #Q3 - (#E5 * #k3);
-            #Q  := #Q3 - (#E * #kp);
+            #Q3    := #Q3 - (#E5 * #k3);
+            #Q_full    := #Q3 - (#E * #kp);
         ELSE
-            #Q3 := #Q3 + (#E5 * #k3);
-            #Q  := #Q3 + (#E * #kp);
+            #Q3    := #Q3 + (#E5 * #k3);
+            #Q_full    := #Q3 + (#E * #kp);
         END_IF;
-        IF #Q3 < 0    THEN    #Q3 := 0;    END_IF;
-        IF #Q3 > 100    THEN    #Q3 := 100;    END_IF;
-        IF #Q < 0    THEN    #Q := 0;    END_IF;
-        IF #Q > 100    THEN    #Q := 100;    END_IF;
+        #Q3 := LimRange(L1:=0, L2:=100, v:=#Q3);
+        #Q  := LimRange(L1:=0, L2:=100, v:=#Q_full);
     END_IF;
 END_FUNCTION_BLOCK
 DATA_BLOCK "reg35P_0001"
