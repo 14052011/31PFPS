@@ -399,7 +399,7 @@ ORGANIZATION_BLOCK "Main"
     r1:    REAL;
    END_VAR
 BEGIN
-    TON(IN := NOT BD.x1,
+    t1.TON(IN := NOT BD.x1,
                          PT := T#2s,
                          Q => BD.x1);
     t2.TOF(IN := t1.Q,
