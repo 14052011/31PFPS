@@ -284,7 +284,7 @@ FUNCTION_BLOCK "Reg35P_code"
         k5:    REAL;
         Q3:    REAL;
         Q_full:    REAL;
-        CZ_above1below0:    INT;
+        CZ_above1below0:    BOOL;
         CZQ:    REAL;
         CZQ_s:    REAL;
         CZ_cnt:    REAL;
@@ -292,26 +292,26 @@ FUNCTION_BLOCK "Reg35P_code"
     END_VAR
 BEGIN
     IF dtclk.Q THEN
-        IF (#E5 < 0 AND CZ_above1below0 = 1) OR (#E5 > 0 AND CZ_above1below0 = 0) THEN
+        IF (#E5 < 0 AND CZ_above1below0) OR (#E5 > 0 AND NOT CZ_above1below0) THEN
             #CZQ_s    := #CZ_cnt;
             #CZ_cnt_prev    := #CZ_cnt;
             #CZ_cnt    := 0;
         END_IF;
         #CZ_cnt := #CZ_cnt + 1;
-        IF #CZ_cnt > 100000 THEN #CZ_cnt := 100000; END_IF;
+        IF #CZ_cnt > 100000 THEN #CZ_cnt := 100000.0; END_IF;
         IF #CZ_cnt > #CZ_cnt_prev THEN
             #CZQ_s    := #CZ_cnt;
         END_IF;
         IF #E5 < 0 THEN CZ_above1below0 := 0; END_IF;
         IF #E5 > 0 THEN CZ_above1below0 := 1; END_IF;
-        #CZQ := #CZQ + ((#CZQ_s - #CZQ) * CZ_t);
+        #CZQ := #CZQ + ((#CZQ_s - #CZQ) / CZ_t);
         #k5 := MapARange(
             v := #CZQ,
             i1:=#CZQ_k5low,    i2:=#CZQ_k5high,
             o1:=0.0,    o2:=#k5_max
         );
-        #k5 := LimRange(L1:=0, L2:=#k5_max, v:=#k5);
-        #avgA := #avgA + ((#A - #avgA) * #t5);
+        #k5 := LimRange(L1:=0.0, L2:=#k5_max, v:=#k5);
+        #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
         IF ABS(#E) < #E_P1 THEN
