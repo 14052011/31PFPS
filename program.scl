@@ -249,32 +249,83 @@ BEGIN
 END_DATA_BLOCK
 FUNCTION_BLOCK "Reg35P_code"
     VAR_INPUT
-        A:    REAL;
-        SP:    REAL;
+        A:    REAL;    
+        SP:    REAL;    
         mode:    INT;    
+        kp:    REAL;    
+        k3_P1:    REAL;
+        k3_P2:    REAL;
+        E_P1:    REAL;
+        E_P2:    REAL;
         t5:    REAL;    
-        k5_max:    REAL;
-        CZ_Q_min:    REAL;    
-        CZ_Q_max:    REAL;    
+        k5_max:    REAL;    
+        CZQ_min:    REAL;    
+        CZQ_max:    REAL;    
+        CZ_t:    REAL;    
     END_VAR
     VAR_OUTPUT
-        Q:    REAL;
+        Q:    REAL;    
     END_VAR
     VAR
         avgA:    REAL;
+        E:    REAL;
         E5:    REAL;
+        k3:    REAL;
+        k5:    REAL;
         Q3:    REAL;
+        CZ_above1below0:    INT;
+        CZQ:    REAL;
+        CZ_cnt:    REAL;
+        CZ_cnt_prev:    REAL;
     END_VAR
 BEGIN
     IF dtclk.Q THEN
+        IF (#E5 < 0 AND CZ_above1below0 = 1) OR (#E5 > 0 AND CZ_above1below0 = 0) THEN
+            #CZQ_s    := #CZ_cnt;
+            #CZ_cnt_prev    := #CZ_cnt;
+            #CZ_cnt    := 0;
+        END_IF;
+        #CZ_cnt := #CZ_cnt + 1;
+        IF #CZ_cnt > 1000000 THEN #CZ_cnt := 1000000; END_IF;
+        IF #CZ_cnt > #CZ_cnt_prev THEN
+            #CZQ_s    := #CZ_cnt;
+        END_IF;
+        IF #E5 < 0 THEN CZ_above1below0 := 0; END_IF;
+        IF #E5 > 0 THEN CZ_above1below0 := 1; END_IF;
+        #CZQ := #CZQ + ((#CZQ_s - #CZQ) * CZ_t);
+        #k5 := MapARange(
+            v := #CZQ,
+            i1:=#CZQ_min,    i2:=#CZQ_max,
+            o1:=0.0,    o2:=#k5_max
+        )
+        IF #k5 > k5_max    THEN    #k5 := #k5_max;
         #avgA := #avgA + ((#A - #avgA) * #t5)
-        #E5 := (#A + ((#A - #avgA) * #k5)) - #SP;
+        #E  := #A - #SP;
+        #E5 := #E + ((#A - #avgA) * #k5);
+        IF ABS(#E < #E_P1) THEN
+            #k3 := MapARange(
+                v := #E,
+                i1:=0.0,    i2:=#E_P1,
+                o1:=0.0,    o2:=#k3_P1
+            )
+        ELSE
+            #k3 := MapARange(
+                v := #E,
+                i1:=#E_P1,    i2:=#E_P2,
+                o1:=#k3_P1,    o2:=#k3_P2
+            )
+        END_IF;
         IF #mode = 1 THEN
             #Q3 := #Q3 - (#E5 * #k3);
+            #Q  := #Q3 - (#E * #kp);
         ELSE
             #Q3 := #Q3 + (#E5 * #k3);
+            #Q  := #Q3 + (#E * #kp);
         END_IF;
-        #Q := #Q3;
+        IF #Q3 < 0    THEN    #Q3 := 0;
+        IF #Q3 > 100    THEN    #Q3 := 100;
+        IF #Q < 0    THEN    #Q := 0;
+        IF #Q > 100    THEN    #Q := 100;
     END_IF;
 END_FUNCTION_BLOCK
 DATA_BLOCK "reg35P_0001"
