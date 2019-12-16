@@ -285,6 +285,7 @@ FUNCTION_BLOCK "Reg35P_code"
         E5:    REAL;
         k3:    REAL;
         k5:    REAL;
+        k13:    REAL;
         Q3:    REAL;
         Q_full:    REAL;
         CZ_above1below0:    BOOL;
