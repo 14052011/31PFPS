@@ -272,6 +272,9 @@ FUNCTION_BLOCK "Reg35P_code"
         CZQ_k5low:    REAL;    
         CZQ_k5high:    REAL;    
         CZ_t:    REAL;    
+        k13_max:    REAL;    
+        CZQ_k13low:    REAL;    
+        CZQ_k13high:    REAL;    
     END_VAR
     VAR_OUTPUT
         Q:    REAL;    
@@ -311,6 +314,12 @@ BEGIN
             o1:=0.0,    o2:=#k5_max
         );
         #k5 := LimRange(L1:=0.0, L2:=#k5_max, v:=#k5);
+        #k13 := MapARange(
+            v := #CZQ,
+            i1:=#CZQ_k13low,    i2:=#CZQ_k13high,
+            o1:=0,    o2:=#k13_max
+        );
+        #k13 := LimRange(L1:=0, L2:=#k13_max, v:=#k13);
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
@@ -328,10 +337,10 @@ BEGIN
             ));
         END_IF;
         IF #mode = 1 THEN
-            #Q3    := #Q3 - (#E5 * #k3);
+            #Q3    := #Q3 - (#E5 * #k3) - (#E * #k13);
             #Q_full    := #Q3 - (#E * #kp);
         ELSE
-            #Q3    := #Q3 + (#E5 * #k3);
+            #Q3    := #Q3 + (#E5 * #k3) + (#E * #k13);
             #Q_full    := #Q3 + (#E * #kp);
         END_IF;
         IF NOT enable THEN
@@ -594,7 +603,7 @@ BEGIN
         L1:=0.0, L2:=150.0,
         v:=MapARange(
             v := r1,
-            i1:=13872.0, i2:=14800.0,
+            i1:=14050.0, i2:=14850.0,
             o1:=0.0, o2:=100.0
         )
     );
@@ -602,7 +611,7 @@ BEGIN
         avg01_0001(
             init    := 0,
             X    := r1,
-            t    := 2,
+            t    := 1,
             Q    => BD.TankLevel
         );
     END_IF;
@@ -760,15 +769,18 @@ BEGIN
             enable    := BD.t3_heating,
             off_value    := 0.0,
             kp    := 0.0,
-            k3_P1    := 0.005,        
-            k3_P2    := 0.05,        
-            E_P1    := 0.5,
-            E_P2    := 15.0,
+            k3_P1    := 0.025,
+            k3_P2    := 0.07,
+            E_P1    := 1.0,
+            E_P2    := 10.0,
             t5    := 10,
-            k5_max    := 270,        
+            k5_max    := 270,
             CZQ_k5low    := 10,
             CZQ_k5high    := 200,
-            CZ_t    := 10.0
+            CZ_t    := 10.0,
+            k13_max    := 0.2,
+            CZQ_k13low    := 10,
+            CZQ_k13high    := 200
         );
         BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
