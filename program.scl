@@ -506,6 +506,8 @@ BEGIN
             BD.Pump1    := 1;
             BD.Pump1_Perc    := 100.0;
             BD.Pump2    := 1;
+            BD.t3_SP    := 60;
+            BD.t3_heating    := 1;
             BD.MainState_sub := 1;
         1: 
             BD.V2a    := 0;
@@ -550,11 +552,12 @@ BEGIN
         END_CASE;
         CASE BD.MainState_sub OF
         1..4:
-            IF BD.Flow < 5.0 AND BD.TankLevel < 30.0 THEN
+            IF BD.Flow < 5.0 AND BD.TankLevel < 20.0 THEN
                 BD.MainState_sub := 10;
                 ErrorMsg := 3;
             END_IF;
         10:
+            BD.t3_heating    := 0;
             BD.Pump1    := 0;
             BD.Pump1_Perc    := 0.0;
             BD.Pump2    := 0;
