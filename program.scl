@@ -445,6 +445,7 @@ BEGIN
 	        BD.V2a    := 1;
 	        BD.V2b    := 0;
 	13: 
+	    ;
 	END_CASE;
 	Step_2SC := INT_TO_WORD( BD.Sub_2SC_State );
 	CASE BD.Sub_3T_State OF
@@ -551,7 +552,7 @@ BEGIN
         1..4:
             IF BD.Flow < 5.0 AND BD.TankLevel < 30.0 THEN
                 BD.MainState_sub := 10;
-                BD.ErrorMsg := 3;
+                ErrorMsg := 3;
             END_IF;
         10:
             BD.Pump1    := 0;
@@ -559,7 +560,7 @@ BEGIN
             BD.Pump2    := 0;
             IF BD.TankLevel > 60.0 THEN
                 BD.MainState_sub := 0;
-                BD.ErrorMsg := 0;
+                ErrorMsg := 0;
             END_IF;
         END_CASE;
         CASE BD.MainState_sub OF
@@ -887,7 +888,7 @@ BEGIN
             CZQ_k13low    := 10,
             CZQ_k13high    := 200,
             QFC_up    := 0.1,
-            QFC_down    := 0.1,
+            QFC_down    := 0.1
         );
         BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
