@@ -228,11 +228,12 @@ NON_RETAIN
     STRUCT
         x1:    Bool;
         MainState:    INT;
+        MainState_sub:    INT;
         t3_real:    REAL;
         t3_SP:    REAL;
         t3_heating:    BOOL;
         t4_real:    REAL;
-        V6:    BOOL;
+        V6_Perc:    REAL;
         V9:    BOOL;
         V4:    BOOL;
         V7:    BOOL;
@@ -240,7 +241,6 @@ NON_RETAIN
         V2a:    BOOL;
         V2b:    BOOL;
         V1:    BOOL;
-        V6_Perc:    REAL;
         Vhs:    BOOL;
         Vhs_Perc:    REAL;
         Pump1:    BOOL;
@@ -275,6 +275,8 @@ FUNCTION_BLOCK "Reg35P_code"
         k13_max:    REAL;    
         CZQ_k13low:    REAL;    
         CZQ_k13high:    REAL;    
+        QFC_up:    REAL;    
+        QFC_down:    REAL;    
     END_VAR
     VAR_OUTPUT
         Q:    REAL;    
@@ -287,14 +289,18 @@ FUNCTION_BLOCK "Reg35P_code"
         k5:    REAL;
         k13:    REAL;
         Q3:    REAL;
-        Q_full:    REAL;
         CZ_above1below0:    BOOL;
         CZQ:    REAL;
         CZQ_s:    REAL;
         CZ_cnt:    REAL;
         CZ_cnt_prev:    REAL;
+        Q_full:    REAL;
+        Q_full_prev:    REAL;
+        Q_prevdir_up:    BOOL;
     END_VAR
 BEGIN
+    (* Copyright (c) 2019 Leonid Titov. All rights reserved *)
+    (* www.avtprom.com *)
     IF dtclk.Q THEN
         IF (#E5 < 0 AND CZ_above1below0) OR (#E5 > 0 AND NOT CZ_above1below0) THEN
             #CZQ_s    := #CZ_cnt;
@@ -349,7 +355,19 @@ BEGIN
             #Q_full    := #off_value;
         END_IF;
         #Q3 := LimRange(L1:=0.0, L2:=100.0, v:=#Q3);
-        #Q  := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
+        IF #Q_full < #Q_full_prev AND #Q_prevdir_up THEN
+            Q_full := #Q_full - QFC_down;
+        ELSIF #Q_full > #Q_full_prev AND NOT #Q_prevdir_up THEN
+            Q_full := #Q_full + QFC_up;
+        END_IF;
+        IF #Q_full < #Q_full_prev THEN
+            #Q_prevdir_up := 0;
+        ELSIF #Q_full > #Q_full_prev THEN
+            #Q_prevdir_up := 1;
+        END_IF;
+        Q_full_prev := Q_full;
+        #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
+        #Q := #Q_full;
     END_IF;
 END_FUNCTION_BLOCK
 DATA_BLOCK "reg35P_0001"
@@ -426,6 +444,7 @@ BEGIN
 	1: 
 	        BD.V2a    := 1;
 	        BD.V2b    := 0;
+	13: 
 	END_CASE;
 	Step_2SC := INT_TO_WORD( BD.Sub_2SC_State );
 	CASE BD.Sub_3T_State OF
@@ -442,12 +461,13 @@ BEGIN
 	Step_3T := INT_TO_WORD( BD.Sub_3T_State );
     CASE BD.MainState OF
     0: 
-        BD.V6    := 0;
+        BD.MainState_sub := 0;
         BD.V6_Perc    := 0;
         BD.Sub_3T_State    := 0;
         BD.V4    := 0;
         BD.V7    := 0;
         BD.V3    := 0;
+        BD.Sub_2SC_State    := 0;
         BD.V1    := 0;
         BD.Vhs    := 0;
         BD.Vhs_Perc    := 0;
@@ -471,14 +491,92 @@ BEGIN
             END_IF;
         END_IF;
     1: 
-        StatusButton1 := 2;
-        StatusButton2 := 0;
-        StatusButton3 := 0;
-        IF ep_GA1_Btn.Q01 THEN
-            BD.MainState := 0;
+        CASE BD.MainState_sub OF
+        0: 
+            BD.V6_Perc    := 100;
+            BD.Sub_3T_State    := 0;
+            BD.V4    := 1;
+            BD.V7    := 0;
+            BD.V3    := 0;
+            BD.Sub_2SC_State    := 13;
+            BD.V2a    := 0;
+            BD.V2b    := 1;
+            BD.V1    := 0;
+            BD.Pump1    := 1;
+            BD.Pump1_Perc    := 100.0;
+            BD.Pump2    := 1;
+            BD.MainState_sub := 1;
+        1: 
+            BD.V2a    := 0;
+            BD.V2b    := 1;
+            BD.V1    := 0;
+            BD.Pump2    := 1;
+            kt19_0001(xReset:=0, T:=T#30s);
+            IF kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 2;
+            END_IF;
+        2: 
+            BD.V2a    := 0;
+            BD.V2b    := 1;
+            BD.V1    := 1;
+            BD.Pump2    := 0;
+            kt19_0001(xReset:=0, T:=T#7s);
+            IF kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 3;
+            END_IF;
+        3: 
+            BD.V2a    := 0;
+            BD.V2b    := 1;
+            BD.V1    := 0;
+            BD.Pump2    := 1;
+            kt19_0001(xReset:=0, T:=T#10s);
+            IF kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 4;
+            END_IF;
+        4: 
+            BD.V2a    := 1;
+            BD.V2b    := 0;
+            BD.V1    := 0;
+            BD.Pump2    := 1;
+            kt19_0001(xReset:=0, T:=T#12s);
+            IF kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 1;
+            END_IF;
+        END_CASE;
+        CASE BD.MainState_sub OF
+        1..4:
+            IF BD.Flow < 5.0 AND BD.TankLevel < 30.0 THEN
+                BD.MainState_sub := 10;
+                BD.ErrorMsg := 3;
+            END_IF;
+        10:
+            BD.Pump1    := 0;
+            BD.Pump1_Perc    := 0.0;
+            BD.Pump2    := 0;
+            IF BD.TankLevel > 60.0 THEN
+                BD.MainState_sub := 0;
+                BD.ErrorMsg := 0;
+            END_IF;
+        END_CASE;
+        CASE BD.MainState_sub OF
+        0..254:
+            StatusButton1 := 2;
+            StatusButton2 := 0;
+            StatusButton3 := 0;
+            IF ep_GA1_Btn.Q01 THEN
+                BD.MainState := 0;
+                BD.MainState_sub := 255;
+            END_IF;
+        END_CASE;
+        IF BD.MainState_sub = 255 THEN
+            BD.MainState_sub := 0;
         END_IF;
     2: 
-        BD.V6    := 0;
+        BD.V6_Perc    := 0.0;
         BD.Sub_3T_State    := 1;
         BD.V4    := 0;
         BD.V7    := 1;
@@ -496,7 +594,7 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 0;
     3: 
-        BD.V6    := 0;
+        BD.V6_Perc    := 0.0;
         BD.V4    := 0;
         BD.V7    := 0;
         BD.V3    := 1;
@@ -509,7 +607,7 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 0;
     4: 
-        BD.V6    := 0;
+        BD.V6_Perc    := 0.0;
         BD.V4    := 0;
         BD.V7    := 0;
         BD.V3    := 1;
@@ -524,7 +622,7 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 0;
     5: 
-        BD.V6    := 0;
+        BD.V6_Perc    := 0.0;
         BD.V4    := 0;
         BD.V7    := 0;
         BD.V3    := 1;
@@ -679,7 +777,7 @@ BEGIN
         IF ep_MM_006.Q01 OR ep_MM_007.Q01    THEN IF ll_V2a THEN ll_V2a := 0; ELSE ll_V2a := 1; END_IF; ll_V2b := NOT ll_V2a;    END_IF;
         IF ep_MM_008.Q01    THEN IF ll_V1 THEN ll_V1 := 0; ELSE ll_V1 := 1; END_IF;    END_IF;
     ELSE
-        ll_V6    :=    BD.V6;
+        IF BD.V6_Perc > 0 THEN ll_V6 := 1; ELSE ll_V6 := 0; END_IF;
         ll_V9    :=    BD.V9;
         ll_V4    :=    BD.V4;
         ll_V7    := NOT    BD.V7;
@@ -728,13 +826,19 @@ BEGIN
     ELSE
         PercValveProdukt := INT_TO_WORD(REAL_TO_INT( BD.V6_Perc * 10.0 ));
     END_IF;
-    LL_V6_420 := REAL_TO_INT(
-        MapARange(
-            v:=LimRange(L1:=0.0, L2:=100.0, v:=BD.V6_Perc),
+    r1 := BD.V6_Perc;
+    r1 := LimRange(L1:=0.0, L2:=100.0, v:=r1);
+    r1 := MapARange(
+            v := r1,
+            i1:=0, i2:=100,
+            o1:=15, o2:=38
+    );
+    r1 := MapARange(
+            v := r1,
             i1:=0.0, i2:=100.0,
             o1:=0.0, o2:=27648.0
-        )
     );
+    LL_V6_420 := REAL_TO_INT( r1 );
     ep_MM_012(CLK := "EnterValve15");
     ep_MM_013(CLK := "EnterValve_6.1");
     IF BD.MainState = 13 THEN
@@ -781,7 +885,9 @@ BEGIN
             CZ_t    := 10.0,
             k13_max    := 0.2,
             CZQ_k13low    := 10,
-            CZQ_k13high    := 200
+            CZQ_k13high    := 200,
+            QFC_up    := 0.1,
+            QFC_down    := 0.1,
         );
         BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
