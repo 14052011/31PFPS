@@ -1088,11 +1088,28 @@ BEGIN
         BD.V4    := 0;
         BD.V3    := 0;
         BD.V7    := 1;
+        CASE BD.MainState_sub OF 
+        0:
+            BD.V1    := 0;
+            kt19_0002(xReset:=0, T:=T#20s);
+            IF kt19_0002.xEnd THEN
+                kt19_0002(xReset:=1, T:=T#0s);
+                BD.MainState_sub    := 1;
+            END_IF;
+        1:
+            BD.V1    := 1;
+            kt19_0002(xReset:=0, T:=T#3s);
+            IF kt19_0002.xEnd THEN
+                kt19_0002(xReset:=1, T:=T#0s);
+                BD.MainState_sub    := 0;
+            END_IF;
+        END_CASE;
         kt19_0001(xReset:=0, T:=T#400s);
         IF kt19_0001.xEnd THEN
             kt19_0001(xReset:=1, T:=T#0s);
             BD.MainState    := 5;
             BD.MainState_sub    := 255;
+            BD.V1    := 0;
         END_IF;
         IF BD.MainState_sub = 255 THEN
             BD.MainState_sub := 0;
