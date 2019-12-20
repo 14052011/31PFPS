@@ -292,6 +292,8 @@ FUNCTION_BLOCK "Reg35P_code"
         CZQ_k13high:    REAL;    
         QFC_up:    REAL;    
         QFC_down:    REAL;    
+        CZQ_QFC_k_low:    REAL;    
+        CZQ_QFC_k_high:    REAL;    
     END_VAR
     VAR_OUTPUT
         Q:    REAL;    
@@ -312,6 +314,7 @@ FUNCTION_BLOCK "Reg35P_code"
         Q_full:    REAL;
         Q_full_prev:    REAL;
         Q_prevdir_up:    BOOL;
+        QFC_k:    REAL;
     END_VAR
 BEGIN
     (* Copyright (c) 2019 Leonid Titov. All rights reserved *)
@@ -370,17 +373,23 @@ BEGIN
             #Q_full    := #off_value;
         END_IF;
         #Q3 := LimRange(L1:=0.0, L2:=100.0, v:=#Q3);
+        #QFC_k := MapARange(
+            v := #CZQ,
+            i1:=#CZQ_QFC_k_low,    i2:=#CZQ_QFC_k_high,
+            o1:=0.0,    o2:=1.0
+        );
+        #QFC_k := LimRange(L1:=0.0, L2:=#QFC_k_max, v:=#QFC_k);
         IF #Q_full < #Q_full_prev AND #Q_prevdir_up THEN
-            Q_full := #Q_full - QFC_down;
+            #Q_full := #Q_full - (#QFC_down * #QFC_k);
         ELSIF #Q_full > #Q_full_prev AND NOT #Q_prevdir_up THEN
-            Q_full := #Q_full + QFC_up;
+            #Q_full := #Q_full + (#QFC_up * #QFC_k);
         END_IF;
         IF #Q_full < #Q_full_prev THEN
             #Q_prevdir_up := 0;
         ELSIF #Q_full > #Q_full_prev THEN
             #Q_prevdir_up := 1;
         END_IF;
-        Q_full_prev := Q_full;
+        #Q_full_prev := #Q_full;
         #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
         #Q := #Q_full;
     END_IF;
@@ -510,14 +519,16 @@ BEGIN
 			E_P2    := 10.0,
 			t5    := 10,
 			k5_max    := 270,
-			CZQ_k5low    := 10,
+			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 10.0,
+			CZ_t    := 50.0,
 			k13_max    := 0.2,
-			CZQ_k13low    := 10,
+			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 20.0,
-			QFC_down    := 20.0,
+			QFC_up    := 40,
+			QFC_down    := 40,
+			CZQ_QFC_k_low    := 30,
+			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
 	    );
 	63: 
@@ -538,14 +549,16 @@ BEGIN
 			E_P2    := 10.0,
 			t5    := 10,
 			k5_max    := 270,
-			CZQ_k5low    := 10,
+			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 10.0,
+			CZ_t    := 50.0,
 			k13_max    := 0.2,
-			CZQ_k13low    := 10,
+			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 20.0,
-			QFC_down    := 20.0,
+			QFC_up    := 40,
+			QFC_down    := 40,
+			CZQ_QFC_k_low    := 30,
+			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
 	    );
 	789: 
@@ -566,14 +579,16 @@ BEGIN
 			E_P2    := 10.0,
 			t5    := 10,
 			k5_max    := 270,
-			CZQ_k5low    := 10,
+			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 10.0,
+			CZ_t    := 50.0,
 			k13_max    := 0.2,
-			CZQ_k13low    := 10,
+			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 20.0,
-			QFC_down    := 20.0,
+			QFC_up    := 40,
+			QFC_down    := 40,
+			CZQ_QFC_k_low    := 30,
+			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
 	    );
 	END_CASE;
@@ -866,7 +881,7 @@ BEGIN
                 avg01_0006(
                     init    := 0,
                     X    := BD.t4_real,
-                    t    := 12
+                    t    := 50
                 );
             END_IF;
             IF ABS(avg01_0006.Q - BD.t4_real) < 3.0 THEN
@@ -1289,14 +1304,16 @@ BEGIN
             E_P2    := 10.0,
             t5    := 10,
             k5_max    := 270,
-            CZQ_k5low    := 10,
+            CZQ_k5low    := 30,
             CZQ_k5high    := 200,
-            CZ_t    := 10.0,
+            CZ_t    := 50.0,
             k13_max    := 0.2,
-            CZQ_k13low    := 10,
+            CZQ_k13low    := 30,
             CZQ_k13high    := 200,
             QFC_up    := 0.1,
-            QFC_down    := 0.1
+            QFC_down    := 0.1,
+            CZQ_QFC_k_low    := 30,
+            CZQ_QFC_k_high    := 200
         );
         BD.Vhs_Perc := MapARange(
             v := reg35P_0001.Q,
