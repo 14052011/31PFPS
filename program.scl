@@ -525,8 +525,8 @@ BEGIN
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 40,
-			QFC_down    := 40,
+			QFC_up    := 20,
+			QFC_down    := 20,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -555,8 +555,8 @@ BEGIN
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 40,
-			QFC_down    := 40,
+			QFC_up    := 20,
+			QFC_down    := 20,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -585,8 +585,8 @@ BEGIN
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
-			QFC_up    := 40,
-			QFC_down    := 40,
+			QFC_up    := 20,
+			QFC_down    := 20,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -936,7 +936,7 @@ BEGIN
                 BD.variable_T := BD.variable_T + T#12s;
             ELSIF ep_GA2_Btn.Q01 OR kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
-                BD.MainState := 7;
+                BD.MainState_sub := 7;
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
             END_IF;
@@ -1108,6 +1108,14 @@ BEGIN
             v := #r1,
             i1:=0.0, i2:=12.49,
             o1:=0.0, o2:=20.25
+        )
+    );
+    #r1 := LimRange(
+        L1:=0.0, L2:=250.0,
+        v:=MapARange(
+            v := #r1,
+            i1:=0.0, i2:=38,
+            o1:=0.0, o2:=32
         )
     );
     IF dtclk.Q THEN
