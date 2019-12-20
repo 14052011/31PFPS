@@ -662,6 +662,8 @@ BEGIN
             IF ep_GA1_Btn.Q01 THEN
                 BD.MainState := 0;
                 BD.MainState_sub := 255;
+                ErrorMsg    := 0;
+                ErrorPresence    := 0;
             END_IF;
         END_CASE;
         IF BD.t3_real > BD.t3_SP * 1.1 THEN
