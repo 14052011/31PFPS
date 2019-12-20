@@ -495,7 +495,7 @@ BEGIN
 	0: 
 	    BD.V9 := 0;
 	1: 
-	    IF BD.TankLevel < 10.0 THEN
+	    IF BD.TankLevel < 20.0 THEN
 	        BD.V9 := 1;
 	    END_IF;
 	    IF BD.TankLevel > 80.0 THEN
