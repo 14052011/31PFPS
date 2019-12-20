@@ -526,7 +526,7 @@ BEGIN
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
 			QFC_up    := 20,
-			QFC_down    := 20,
+			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -556,7 +556,7 @@ BEGIN
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
 			QFC_up    := 20,
-			QFC_down    := 20,
+			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -586,7 +586,7 @@ BEGIN
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
 			QFC_up    := 20,
-			QFC_down    := 20,
+			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
 			Q    => BD.V6_Perc
@@ -945,7 +945,7 @@ BEGIN
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
             END_IF;
-        8:
+        7:
             BD.Sub_3T_State    := 789;
             BD.MainState    := 7;
             BD.MainState_sub    := 255;
