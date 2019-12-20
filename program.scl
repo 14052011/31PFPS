@@ -513,8 +513,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.025,
-			k3_P2    := 0.07,
+			k3_P1    := 0.007,
+			k3_P2    := 0.03,
 			E_P1    := 1.0,
 			E_P2    := 10.0,
 			t5    := 10,
@@ -543,8 +543,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.025,
-			k3_P2    := 0.07,
+			k3_P1    := 0.007,
+			k3_P2    := 0.03,
 			E_P1    := 1.0,
 			E_P2    := 10.0,
 			t5    := 10,
@@ -573,8 +573,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.025,
-			k3_P2    := 0.07,
+			k3_P1    := 0.007,
+			k3_P2    := 0.03,
 			E_P1    := 1.0,
 			E_P2    := 10.0,
 			t5    := 10,
@@ -1080,6 +1080,9 @@ BEGIN
             BD.MainState_sub := 0;
         END_IF;
     11: 
+        StatusButton1 := 0;
+        StatusButton2 := 0;
+        StatusButton3 := 0;
         BD.Sub_3T_State    := 1;
         BD.V4    := 0;
         BD.V3    := 0;
