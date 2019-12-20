@@ -1077,6 +1077,7 @@ BEGIN
             END_IF;
         END_CASE;
         IF BD.MainState_sub = 255 THEN
+            ErrorPresence := 0;
             BD.MainState_sub := 0;
         END_IF;
     11: 
