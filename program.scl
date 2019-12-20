@@ -987,13 +987,17 @@ BEGIN
         0: 
             ErrorMsg    := 1; 
             ErrorPresence    := 1;
-            IF THEN
+            IF BD.t3_real >= (BD.t3_SP - 7) THEN
                 BD.MainState_sub := 1;
             END_IF;
         1:
             ErrorMsg    := 7; 
             ErrorPresence    := 1;
             kt19_0001(xReset:=0, T:=T#40s);
+            IF BD.t3_real < (BD.t3_SP - 7) THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 0;
+            END_IF;
             IF kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 255;
