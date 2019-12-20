@@ -431,6 +431,11 @@ NON_RETAIN
 "KT19_code"
 BEGIN
 END_DATA_BLOCK
+DATA_BLOCK "kt19_0003"
+NON_RETAIN
+"KT19_code"
+BEGIN
+END_DATA_BLOCK
 ORGANIZATION_BLOCK "Main"
    VAR_TEMP 
       OB1_EV_CLASS : Byte;   
@@ -560,7 +565,7 @@ BEGIN
         StatusButton1 := 1;
         StatusButton2 := 1;
         StatusButton3 := 1;
-        IF ErrorMsg = 0 THEN
+        IF ErrorMsg = 0 AND NOT ErrorPresence THEN
             IF ep_GA1_Btn.Q01 THEN
                 BD.MainState := 1;
             ELSIF ep_GA2_Btn.Q01 THEN
@@ -572,6 +577,10 @@ BEGIN
     1: 
         CASE BD.MainState_sub OF
         0: 
+            BD.MainState_sub := 10;
+            ErrorMsg := 3;
+            ErrorPresence := 0;
+        1: 
             BD.V6_Perc    := 100;
             BD.Sub_3T_State    := 0;
             BD.V4    := 1;
@@ -586,13 +595,7 @@ BEGIN
             BD.Pump2    := 1;
             BD.t3_SP    := 60;
             BD.t3_heating    := 1;
-            BD.MainState_sub := 1;
-        1: 
-            BD.V2a    := 0;
-            BD.V2b    := 1;
-            BD.V1    := 0;
-            BD.Pump2    := 1;
-            kt19_0001(xReset:=0, T:=T#30s);
+            kt19_0001(xReset:=0, T:=T#40s);
             IF kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 2;
@@ -631,18 +634,23 @@ BEGIN
         CASE BD.MainState_sub OF
         1..4:
             IF BD.Flow < 5.0 AND BD.TankLevel < 20.0 THEN
-                kt19_0001(xReset:=1, T:=T#0s);
-                BD.MainState_sub := 10;
-                ErrorMsg := 3;
+                kt19_0003(xReset:=0, T:=T#40s);
+            END_IF;
+            IF kt19_0003.xEnd THEN
+                kt19_0003(xReset:=1, T:=T#0s);
+                BD.MainState_sub    := 10;
+                ErrorMsg    := 3;
+                ErrorPresence    := 0;
             END_IF;
         10:
             BD.t3_heating    := 0;
             BD.Pump1    := 0;
             BD.Pump1_Perc    := 0.0;
             BD.Pump2    := 0;
-            IF BD.TankLevel > 60.0 THEN
-                BD.MainState_sub := 0;
-                ErrorMsg := 0;
+            IF BD.TankLevel > 30.0 THEN
+                BD.MainState_sub    := 1;
+                ErrorMsg    := 0;
+                ErrorPresence    := 0;
             END_IF;
         END_CASE;
         CASE BD.MainState_sub OF
@@ -686,6 +694,7 @@ BEGIN
         2:
             BD.Sub_3T_State    := 0;
             ErrorMsg    := 20;
+            ErrorPresence    := 0;
             IF BD.Flow < 3.0 THEN
                 BD.MainState_sub := 3;
             END_IF;
@@ -701,6 +710,7 @@ BEGIN
         4:
             BD.LL_Level_420_i1    := avg01_0005.Q;
             ErrorMsg    := 0;
+            ErrorPresence    := 0;
             BD.MainState_sub    := 5;
         5:
             BD.V6_Perc    := 0.0;
@@ -778,20 +788,43 @@ BEGIN
     6: 
         BD.TankLevel_L2    := 8.0;
         BD.TankLevel_L2_halfband    := 3.0;
-        BD.TankLevel_L3    := 20.0;
+        BD.TankLevel_L3    := 15.0;
         CASE BD.MainState_sub OF
         0: 
             BD.MainState_sub := 1;
+            StatusButton1 := 0;
+            StatusButton2 := 0;
+            StatusButton3 := 0;
         1:
             ErrorMsg := 14;
+            ErrorPresence := 0;
             kt19_0001(xReset:=0, T:=T#3s);
             IF kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 2;
                 ErrorMsg := 0;
+                ErrorPresence := 0;
             END_IF;
         2:
+            BD.V7    := 1;
+            BD.V3    := 0;
+            IF BD.TankLevel < BD.TankLevel_L2 THEN
+                BD.MainState_sub := 3;
+            END_IF;
         3:
+            BD.V7    := 0;
+            BD.V3    := 1;
+            ErrorMsg := 18;
+            ErrorPresence := 0;
+            StatusButton1 := 0;
+            StatusButton2 := 0;
+            StatusButton3 := 2;
+            IF ep_GA3_Btn.Q01 THEN
+                ErrorMsg    := 0;
+                ErrorPresence    := 0;
+                BD.MainState_sub    := 4;
+                StatusButton3    := 0;
+            END_IF;
         4:
         5:
         6:
@@ -799,17 +832,8 @@ BEGIN
         END_CASE;
         CASE BD.MainState_sub OF
         0..254:
-            StatusButton1 := 2;
-            StatusButton2 := 0;
-            StatusButton3 := 0;
-            IF ep_GA1_Btn.Q01 THEN
-                BD.MainState := 0;
-                BD.MainState_sub := 255;
-            END_IF;
+            ;
         END_CASE;
-        IF BD.t3_real > BD.t3_SP * 1.1 THEN
-            BD.t3_heating    := 0;
-        END_IF;
         IF BD.MainState_sub = 255 THEN
             BD.MainState_sub := 0;
         END_IF;
@@ -876,17 +900,22 @@ BEGIN
     END_IF;
     IF ResetError THEN
         ErrorMsg := 0;
+        ErrorPresence := 0;
     END_IF;
     IF NOT LL_EmergencyStop_NC THEN
         BD.MainState    := 0;
         ErrorMsg    := 6;
+        ErrorPresence    := 1;
     END_IF;
     IF ErrorMsg <> 0 THEN
-        LL_FaultLight := 1;
         LL_MsgLight := 1;
     ELSE
-        LL_FaultLight := 0;
         LL_MsgLight := 0;
+    END_IF;
+    IF ErrorPresence THEN
+        LL_FaultLight := 1;
+    ELSE
+        LL_FaultLight := 0;
     END_IF;
     IF BD.MainState <> 0 THEN
         LL_RunningLight := 1;
@@ -898,6 +927,7 @@ BEGIN
     ELSE
         LL_PneumoAirPresentLight := 1; 
         ErrorMsg := 4;
+        ErrorPresence := 1;
     END_IF;
     Step_message    := INT_TO_WORD(BD.MainState);
     Step    := INT_TO_WORD(BD.MainState);
