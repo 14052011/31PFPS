@@ -820,6 +820,9 @@ BEGIN
         BD.t3_SP    := 95;
         BD.t3_heating    := 1;
         kt19_0001(xReset:=0, T:=T#300s);
+        IF BD.t3_real < (BD.t3_SP - 5) THEN
+            kt19_0001(xReset:=1, T:=T#0s);
+        END_IF;
         IF kt19_0001.xEnd THEN
             kt19_0001(xReset:=1, T:=T#0s);
             BD.MainState := 401;
@@ -828,6 +831,7 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 0;
     5: 
+        BD.Sub_2SC_State := 0;
         BD.V6_Perc    := 0.0;
         BD.Sub_3T_State    := 1;
         BD.V4    := 0;
@@ -970,10 +974,33 @@ BEGIN
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
+        IF BD.t3_real < (BD.t3_SP - 7) THEN
+            BD.MainState    := 8;
+            BD.MainState_sub    := 255;
+        END_IF;
         IF BD.MainState_sub = 255 THEN
             BD.MainState_sub := 0;
         END_IF;
     8: 
+        BD.Sub_2SC_State := 0;
+        CASE BD.MainState_sub OF
+        0: 
+            ErrorMsg    := 1; 
+            ErrorPresence    := 1;
+            IF THEN
+                BD.MainState_sub := 1;
+            END_IF;
+        1:
+            ErrorMsg    := 7; 
+            ErrorPresence    := 1;
+            kt19_0001(xReset:=0, T:=T#40s);
+            IF kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState_sub := 255;
+                ErrorMsg    := 0;
+                ErrorPresence    := 0;
+            END_IF;
+        END_CASE;
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 5;
@@ -982,7 +1009,9 @@ BEGIN
             BD.MainState_sub    := 255;
         END_IF;
         IF BD.MainState_sub = 255 THEN
-            BD.MainState_sub := 0;
+            BD.Sub_2SC_State := 0;
+            BD.MainState    := 9;
+            BD.MainState_sub    := 0;
         END_IF;
     9: 
         BD.Sub_3T_State    := 789;
@@ -1003,6 +1032,10 @@ BEGIN
             ErrorMsg    := 24;
             ErrorPresence    := 1;
             BD.MainState    := 10;
+            BD.MainState_sub    := 255;
+        END_IF;
+        IF BD.t3_real < (BD.t3_SP - 7) THEN
+            BD.MainState    := 8;
             BD.MainState_sub    := 255;
         END_IF;
         IF BD.MainState_sub = 255 THEN
@@ -1371,8 +1404,8 @@ BEGIN
             enable    := BD.t3_heating,
             off_value    := 0.0,
             kp    := 0.0,
-            k3_P1    := 0.010,
-            k3_P2    := 0.04,
+            k3_P1    := 0.025,
+            k3_P2    := 0.1,
             E_P1    := 1.0,
             E_P2    := 10.0,
             t5    := 10,
