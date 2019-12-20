@@ -1393,43 +1393,43 @@ BEGIN
     );
     "StatusValve15"    := ll_V15;
     "StatusValve61"    := ll_V61;
-        reg35P_0001(
-            A    := MapARange(
-                    v := BD.t3_real,
-                    i1:=0.0,    i2:=150.0,
-                    o1:=0.0,    o2:=100.0        
-                ),
-            SP    := MapARange(
-                    v := BD.t3_SP,
-                    i1:=0.0,    i2:=150.0,
-                    o1:=0.0,    o2:=100.0        
-                ),
-            mode    := 1,
-            enable    := BD.t3_heating,
-            off_value    := 0.0,
-            kp    := 0.0,
-            k3_P1    := 0.025,
-            k3_P2    := 0.1,
-            E_P1    := 1.0,
-            E_P2    := 10.0,
-            t5    := 10,
-            k5_max    := 270,
-            CZQ_k5low    := 30,
-            CZQ_k5high    := 200,
-            CZ_t    := 20.0,
-            k13_max    := 0.2,
-            CZQ_k13low    := 30,
-            CZQ_k13high    := 200,
-            QFC_up    := 0.1,
-            QFC_down    := 0.1,
-            CZQ_QFC_k_low    := 30,
-            CZQ_QFC_k_high    := 200
-        );
-        BD.Vhs_Perc := MapARange(
-            v := reg35P_0001.Q,
-            i1:=0.0,    i2:=100.0,        
-            o1:=0.0,    o2:=100.0
-        );
-        BD.Pump3    := BD.t3_heating;
-        BD.Vhs    := BD.t3_heating;
+	reg35P_0001(
+	    A    := MapARange(
+	            v := BD.t3_real,
+	            i1:=0.0,    i2:=150.0,
+	            o1:=0.0,    o2:=100.0        
+	        ),
+	    SP    := MapARange(
+	            v := BD.t3_SP,
+	            i1:=0.0,    i2:=150.0,
+	            o1:=0.0,    o2:=100.0        
+	        ),
+	    mode    := 1,
+	    enable    := BD.t3_heating,
+	    off_value    := 0.0,
+	    kp    := 0.0,
+	    k3_P1    := 0.005,
+	    k3_P2    := 0.02,
+	    E_P1    := 1.0,
+	    E_P2    := 10.0,
+	    t5    := 10,
+	    k5_max    := 270,
+	    CZQ_k5low    := 30,
+	    CZQ_k5high    := 200,
+	    CZ_t    := 20.0,
+	    k13_max    := 0.2,
+	    CZQ_k13low    := 30,
+	    CZQ_k13high    := 200,
+	    QFC_up    := 0.1,
+	    QFC_down    := 0.1,
+	    CZQ_QFC_k_low    := 30,
+	    CZQ_QFC_k_high    := 200
+	);
+	BD.Vhs_Perc := MapARange(
+	    v := reg35P_0001.Q,
+	    i1:=0.0,    i2:=100.0,        
+	    o1:=0.0,    o2:=100.0
+	);
+	BD.Pump3    := BD.t3_heating;
+	BD.Vhs    := BD.t3_heating;
 END_ORGANIZATION_BLOCK
