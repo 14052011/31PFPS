@@ -826,6 +826,7 @@ BEGIN
                 StatusButton3    := 0;
             END_IF;
         4:
+            ;
         5:
             ;
         6:
