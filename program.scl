@@ -521,7 +521,7 @@ BEGIN
 			k5_max    := 270,
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 50.0,
+			CZ_t    := 20.0,
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
@@ -551,7 +551,7 @@ BEGIN
 			k5_max    := 270,
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 50.0,
+			CZ_t    := 20.0,
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
@@ -581,7 +581,7 @@ BEGIN
 			k5_max    := 270,
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
-			CZ_t    := 50.0,
+			CZ_t    := 20.0,
 			k13_max    := 0.2,
 			CZQ_k13low    := 30,
 			CZQ_k13high    := 200,
@@ -881,7 +881,7 @@ BEGIN
                 avg01_0006(
                     init    := 0,
                     X    := BD.t4_real,
-                    t    := 50
+                    t    := 20
                 );
             END_IF;
             IF ABS(avg01_0006.Q - BD.t4_real) < 3.0 THEN
@@ -1314,7 +1314,7 @@ BEGIN
             k5_max    := 270,
             CZQ_k5low    := 30,
             CZQ_k5high    := 200,
-            CZ_t    := 50.0,
+            CZ_t    := 20.0,
             k13_max    := 0.2,
             CZQ_k13low    := 30,
             CZQ_k13high    := 200,
