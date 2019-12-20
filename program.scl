@@ -975,24 +975,7 @@ BEGIN
             BD.MainState_sub := 0;
         END_IF;
     10: 
-        ErrorMsg    := 19;
-        BlueWarningPresence    := 1;
-        BD.V7    := 0;
-        BD.V3    := 0;
-        BD.V4    := 1;
-        BD.Sub_3T_State    := 62;
-        StatusButton1 := 4;
-        StatusButton2 := 4;
-        StatusButton3 := 0;
-        kt19_0001(xReset:=0, T:=BD.variable_T);    
-        IF ep_GA1_Btn.Q01 THEN
-            BD.variable_T := BD.variable_T + T#12s;
-        ELSIF ep_GA2_Btn.Q01 OR kt19_0001.xEnd THEN
-            kt19_0001(xReset:=1, T:=T#0s);
-            BD.MainState := 7;
-            ErrorMsg    := 0;
-            BlueWarningPresence    := 0;
-        END_IF;
+            BD.MainState := 5;
     13: 
         StatusButton1 := 2;
         StatusButton2 := 0;
