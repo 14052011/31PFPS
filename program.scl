@@ -565,7 +565,7 @@ BEGIN
 	    reg35P_0002(
 	        A    := MapARange(
 	                v := BD.TankLevel,
-	                i1:=60,    i2:=85,
+	                i1:=30,    i2:=90,
 	                o1:=0.0,    o2:=100.0        
 	            ),
 			SP    := 50.0,        
