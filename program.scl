@@ -965,8 +965,8 @@ BEGIN
             BD.MainState_sub    := 255;
         END_IF;
         IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
-            BD.ErrorMsg    := 24;
-            BD.ErrorPresence    := 1;
+            ErrorMsg    := 24;
+            ErrorPresence    := 1;
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
@@ -1000,8 +1000,8 @@ BEGIN
             BD.MainState_sub    := 255;
         END_IF;
         IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
-            BD.ErrorMsg    := 24;
-            BD.ErrorPresence    := 1;
+            ErrorMsg    := 24;
+            ErrorPresence    := 1;
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
