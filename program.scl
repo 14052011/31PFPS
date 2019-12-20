@@ -827,8 +827,11 @@ BEGIN
             END_IF;
         4:
         5:
+            ;
         6:
+            ;
         7:
+            ;
         END_CASE;
         CASE BD.MainState_sub OF
         0..254:
