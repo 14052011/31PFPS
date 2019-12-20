@@ -612,7 +612,7 @@ BEGIN
             END_IF;
         END_IF;
         BlueWarningPresence    := 0;
-        BD.variable_T    := 0;
+        BD.variable_T    := T#0s;
     1: 
         CASE BD.MainState_sub OF
         0: 
