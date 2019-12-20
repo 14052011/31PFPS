@@ -642,7 +642,8 @@ BEGIN
                 ErrorMsg    := 3;
                 ErrorPresence    := 0;
             END_IF;
-        10:
+        10: 
+            BD.V6_Perc    := 100;
             BD.t3_heating    := 0;
             BD.Pump1    := 0;
             BD.Pump1_Perc    := 0.0;
