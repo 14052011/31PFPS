@@ -874,6 +874,7 @@ BEGIN
             BD.V7    := 1;
             BD.V3    := 0;
             BD.Sub_3T_State    := 1;
+            BD.t3_SP := 88;
             StatusButton1 := 0;
             StatusButton2 := 0;
             StatusButton3 := 0;
@@ -949,6 +950,9 @@ BEGIN
             BD.MainState_sub := 0;
         END_IF;
     7: 
+        BD.Sub_3T_State    := 789;
+        BD.V4    := 1;
+        BD.V3    := 0;
         StatusButton1 := 5;
         IF ep_GA1_Btn.Q01 THEN
             BD.MainState    := 9;
@@ -957,6 +961,12 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 5;
         IF ep_GA3_Btn.Q01 THEN
+            BD.MainState    := 10;
+            BD.MainState_sub    := 255;
+        END_IF;
+        IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+            BD.ErrorMsg    := 24;
+            BD.ErrorPresence    := 1;
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
@@ -975,6 +985,9 @@ BEGIN
             BD.MainState_sub := 0;
         END_IF;
     9: 
+        BD.Sub_3T_State    := 789;
+        BD.V4    := 0;
+        BD.V3    := 1;
         StatusButton1 := 0;
         StatusButton2 := 5;
         IF ep_GA2_Btn.Q01 THEN
@@ -986,11 +999,63 @@ BEGIN
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
+        IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+            BD.ErrorMsg    := 24;
+            BD.ErrorPresence    := 1;
+            BD.MainState    := 10;
+            BD.MainState_sub    := 255;
+        END_IF;
         IF BD.MainState_sub = 255 THEN
             BD.MainState_sub := 0;
         END_IF;
     10: 
-            BD.MainState := 5;
+        CASE BD.MainState_sub OF
+        0: 
+            BD.MainState_sub := 1;
+            StatusButton1 := 0;
+            StatusButton2 := 0;
+            StatusButton3 := 0;
+        1:
+            BD.Sub_3T_State    := 0;
+            IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+                BD.MainState_sub := 2;
+                BD.variable_T := T#300s;
+            END_IF;
+        2:
+            BD.Sub_3T_State    := 1;
+            ErrorMsg    := 23;
+            BlueWarningPresence    := 1;
+            StatusButton1 := 4;
+            StatusButton2 := 4;
+            StatusButton3 := 0;
+            kt19_0001(xReset:=0, T:=BD.variable_T);    
+            IF ep_GA1_Btn.Q01 THEN
+                BD.variable_T := BD.variable_T + T#12s;
+            ELSIF ep_GA2_Btn.Q01 OR kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
+                BD.MainState    := 11;
+                BD.MainState_sub    := 255;
+                ErrorMsg    := 0;
+                BlueWarningPresence    := 0;
+            END_IF;
+        END_CASE;
+        IF BD.MainState_sub = 255 THEN
+            BD.MainState_sub := 0;
+        END_IF;
+    11: 
+        BD.Sub_3T_State    := 1;
+        BD.V4    := 0;
+        BD.V3    := 0;
+        BD.V7    := 1;
+        kt19_0001(xReset:=0, T:=T#400s);
+        IF kt19_0001.xEnd THEN
+            kt19_0001(xReset:=1, T:=T#0s);
+            BD.MainState    := 5;
+            BD.MainState_sub    := 255;
+        END_IF;
+        IF BD.MainState_sub = 255 THEN
+            BD.MainState_sub := 0;
+        END_IF;
     13: 
         StatusButton1 := 2;
         StatusButton2 := 0;
