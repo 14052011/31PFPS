@@ -378,7 +378,7 @@ BEGIN
             i1:=#CZQ_QFC_k_low,    i2:=#CZQ_QFC_k_high,
             o1:=0.0,    o2:=1.0
         );
-        #QFC_k := LimRange(L1:=0.0, L2:=#QFC_k_max, v:=#QFC_k);
+        #QFC_k := LimRange(L1:=0.0, L2:=1.0, v:=#QFC_k);
         IF #Q_full < #Q_full_prev AND #Q_prevdir_up THEN
             #Q_full := #Q_full - (#QFC_down * #QFC_k);
         ELSIF #Q_full > #Q_full_prev AND NOT #Q_prevdir_up THEN
