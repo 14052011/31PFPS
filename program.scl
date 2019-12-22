@@ -317,8 +317,10 @@ FUNCTION_BLOCK "Reg35P_code"
         QFC_k:    REAL;
     END_VAR
 BEGIN
+    (* Reg35P *)
     (* Copyright (c) 2019 Leonid Titov. All rights reserved *)
     (* www.avtprom.com *)
+    (* version 2019-12-22 *)
     IF dtclk.Q THEN
         IF (#E5 < 0 AND CZ_above1below0) OR (#E5 > 0 AND NOT CZ_above1below0) THEN
             #CZQ_s    := #CZ_cnt;
@@ -336,9 +338,9 @@ BEGIN
         #k5 := MapARange(
             v := #CZQ,
             i1:=#CZQ_k5low,    i2:=#CZQ_k5high,
-            o1:=0.0,    o2:=#k5_max
+            o1:=1.0,    o2:=#k5_max
         );
-        #k5 := LimRange(L1:=0.0, L2:=#k5_max, v:=#k5);
+        #k5 := LimRange(L1:=1.0, L2:=#k5_max, v:=#k5);
         #k13 := MapARange(
             v := #CZQ,
             i1:=#CZQ_k13low,    i2:=#CZQ_k13high,
@@ -347,7 +349,7 @@ BEGIN
         #k13 := LimRange(L1:=0.0, L2:=#k13_max, v:=#k13);
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
-        #E5 := ((#A - #avgA) * #k5) + #E;
+        #E5 := ((#A - #avgA) * #k5) + #avgA - $SP;
         IF ABS(#E) < #E_P1 THEN
             #k3 := ABS(MapARange(
                 v := #E,
