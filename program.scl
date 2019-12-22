@@ -349,7 +349,7 @@ BEGIN
         #k13 := LimRange(L1:=0.0, L2:=#k13_max, v:=#k13);
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
-        #E5 := ((#A - #avgA) * #k5) + #avgA - $SP;
+        #E5 := ((#A - #avgA) * #k5) + #avgA - #SP;
         IF ABS(#E) < #E_P1 THEN
             #k3 := ABS(MapARange(
                 v := #E,
