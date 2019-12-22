@@ -342,9 +342,9 @@ BEGIN
         #k13 := MapARange(
             v := #CZQ,
             i1:=#CZQ_k13low,    i2:=#CZQ_k13high,
-            o1:=0,    o2:=#k13_max
+            o1:=0.0,    o2:=#k13_max
         );
-        #k13 := LimRange(L1:=0, L2:=#k13_max, v:=#k13);
+        #k13 := LimRange(L1:=0.0, L2:=#k13_max, v:=#k13);
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := #E + ((#A - #avgA) * #k5);
@@ -522,9 +522,9 @@ BEGIN
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
 			CZ_t    := 20.0,
-			k13_max    := 0.2,
-			CZQ_k13low    := 30,
-			CZQ_k13high    := 200,
+			k13_max    := 0.1,
+			CZQ_k13low    := 100,
+			CZQ_k13high    := 500,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -552,9 +552,9 @@ BEGIN
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
 			CZ_t    := 20.0,
-			k13_max    := 0.2,
-			CZQ_k13low    := 30,
-			CZQ_k13high    := 200,
+			k13_max    := 0.1,
+			CZQ_k13low    := 100,
+			CZQ_k13high    := 500,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -582,9 +582,9 @@ BEGIN
 			CZQ_k5low    := 30,
 			CZQ_k5high    := 200,
 			CZ_t    := 20.0,
-			k13_max    := 0.2,
-			CZQ_k13low    := 30,
-			CZQ_k13high    := 200,
+			k13_max    := 0.1,
+			CZQ_k13low    := 100,
+			CZQ_k13high    := 500,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -844,6 +844,10 @@ BEGIN
         BD.t3_SP    := 90;
         BD.t3_heating    := 1;
         StatusButton1 := 2;
+        IF ep_GA1_Btn.Q01 THEN
+            BD.MainState    := 0;
+            BD.MainState_sub    := 255;
+        END_IF;
         StatusButton2 := 3;
         IF ep_GA2_Btn.Q01 THEN
             BD.MainState    := 6;
@@ -1021,7 +1025,15 @@ BEGIN
         BD.Sub_3T_State    := 789;
         BD.V4    := 0;
         BD.V3    := 1;
-        StatusButton1 := 0;
+        kt19_0001(xReset:=0, T:=T#3m);
+        IF kt19_0001.xEnd THEN
+            BD.MainState    := 7;
+            BD.MainState_sub    := 255;
+        END_IF;
+        StatusButton1 := 4;
+        IF ep_GA1_Btn.Q01 THEN
+            kt19_0001(xReset:=1, T:=T#0s);
+        END_IF;
         StatusButton2 := 5;
         IF ep_GA2_Btn.Q01 THEN
             BD.MainState    := 7;
@@ -1043,6 +1055,7 @@ BEGIN
             BD.MainState_sub    := 255;
         END_IF;
         IF BD.MainState_sub = 255 THEN
+            kt19_0001(xReset:=1, T:=T#0s);
             BD.MainState_sub := 0;
         END_IF;
     10: 
@@ -1429,18 +1442,18 @@ BEGIN
 	    enable    := BD.t3_heating,
 	    off_value    := 0.0,
 	    kp    := 0.0,
-	    k3_P1    := 0.005,
-	    k3_P2    := 0.02,
+	    k3_P1    := 5.0,        
+	    k3_P2    := 15.0,
 	    E_P1    := 1.0,
 	    E_P2    := 10.0,
 	    t5    := 10,
-	    k5_max    := 270,
+	    k5_max    := 1,
 	    CZQ_k5low    := 10,
 	    CZQ_k5high    := 200,
-	    CZ_t    := 20.0,
-	    k13_max    := 0.2,
-	    CZQ_k13low    := 10,
-	    CZQ_k13high    := 200,
+	    CZ_t    := 30.0,
+	    k13_max    := 0.1,
+	    CZQ_k13low    := 150,
+	    CZQ_k13high    := 500,
 	    QFC_up    := 0.1,
 	    QFC_down    := 0.1,
 	    CZQ_QFC_k_low    := 30,
