@@ -892,7 +892,9 @@ BEGIN
                 BD.MainState_sub := 3;
             END_IF;
         3:
-            IF NOT BD.V9 THEN
+            kt19_0001(xReset:=0, T:=T#30s);
+            IF NOT BD.V9 OR kt19_0001.xEnd THEN
+                kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 4;
             END_IF;
         4:
