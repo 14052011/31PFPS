@@ -351,15 +351,15 @@ BEGIN
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := ((#A - #avgA) * #k5) + #avgA - #SP;
-        IF ABS(#E5) < #E_P1 THEN
+        IF ABS(#E) < #E_P1 THEN
             #k3 := ABS(MapARange(
-                v := #E5,
+                v := #E,
                 i1:=0.0,    i2:=#E_P1,
                 o1:=0.0,    o2:=#k3_P1
             ));
         ELSE
             #k3 := ABS(MapARange(
-                v := #E5,
+                v := #E,
                 i1:=#E_P1,    i2:=#E_P2,
                 o1:=#k3_P1,    o2:=#k3_P2
             ));
@@ -1445,14 +1445,14 @@ BEGIN
 	    enable    := BD.t3_heating,
 	    off_value    := 0.0,
 	    kp    := 0.0,
-	    k3_P1    := 0.02,
+	    k3_P1    := 0.01,
 	    k3_P2    := 0.06,
 	    E_P1    := 0.5,
 	    E_P2    := 10.0,
 	    t5    := 70,
 	    k5_max    := 15,
-	    CZQ_k5low    := 10,
-	    CZQ_k5high    := 200,
+	    CZQ_k5low    := 50,
+	    CZQ_k5high    := 500,
 	    CZ_t    := 250.0,
 	    CZ_cnt_max    := 600,    
 	    k13_max    := 0.02,
