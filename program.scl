@@ -1452,7 +1452,7 @@ BEGIN
 	    k5_max    := 270,
 	    CZQ_k5low    := 10,
 	    CZQ_k5high    := 200,
-	    CZ_t    := 30.0,
+	    CZ_t    := 100.0,
 	    k13_max    := 0.1,
 	    CZQ_k13low    := 150,
 	    CZQ_k13high    := 500,
