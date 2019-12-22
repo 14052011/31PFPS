@@ -929,12 +929,20 @@ BEGIN
             ErrorMsg    := 18;
             BlueWarningPresence    := 1;
             StatusButton1 := 0;
-            StatusButton2 := 0;
+            StatusButton2 := 2;
             StatusButton3 := 2;
+            IF ep_GA2_Btn.Q01 THEN
+                ErrorMsg    := 0;
+                BlueWarningPresence    := 0;
+                BD.MainState    := 5;
+                BD.MainState_sub    := 255;
+            END_IF;
             IF ep_GA3_Btn.Q01 THEN
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
                 BD.MainState_sub    := 7;
+                StatusButton1    := 0;
+                StatusButton2    := 0;
                 StatusButton3    := 0;
             END_IF;
         7:
