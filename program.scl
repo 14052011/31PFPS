@@ -884,6 +884,22 @@ BEGIN
                 BlueWarningPresence    := 0;
             END_IF;
         2:
+            BD.V7    := 1;
+            BD.V3    := 0;
+            BD.Sub_3T_State    := 1;
+            BD.t3_SP := 88;
+            IF BD.V9 THEN
+                BD.MainState_sub := 3;
+            END_IF;
+        3:
+            IF NOT BD.V9 THEN
+                BD.MainState_sub := 4;
+            END_IF;
+        4:
+            IF BD.V9 THEN
+                BD.MainState_sub := 5;
+            END_IF;
+        5:
             ErrorMsg := 21;
             BD.V7    := 1;
             BD.V3    := 0;
@@ -907,9 +923,9 @@ BEGIN
             IF kt19_0001.xEnd THEN
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
-                BD.MainState_sub    := 3;
+                BD.MainState_sub    := 6;
             END_IF;
-        3:
+        6:
             ErrorMsg    := 18;
             BlueWarningPresence    := 1;
             StatusButton1 := 0;
@@ -918,25 +934,25 @@ BEGIN
             IF ep_GA3_Btn.Q01 THEN
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
-                BD.MainState_sub    := 4;
+                BD.MainState_sub    := 7;
                 StatusButton3    := 0;
             END_IF;
-        4:
+        7:
             BD.V7    := 1;
             BD.V3    := 0;
             BD.Sub_3T_State    := 0;
             IF BD.TankLevel < BD.TankLevel_L2 THEN
-                BD.MainState_sub := 5;
+                BD.MainState_sub := 8;
             END_IF;
-        5:
+        8:
             BD.V7    := 0;
             BD.V3    := 1;
             BD.Sub_3T_State    := 63;
             IF BD.TankLevel > BD.TankLevel_L3 THEN
-                BD.MainState_sub := 6;
+                BD.MainState_sub := 9;
                 BD.variable_T := T#300s;
             END_IF;
-        6:
+        9:
             ErrorMsg    := 19;
             BlueWarningPresence    := 1;
             BD.V7    := 0;
@@ -951,11 +967,11 @@ BEGIN
                 BD.variable_T := BD.variable_T + T#12s;
             ELSIF ep_GA2_Btn.Q01 OR kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
-                BD.MainState_sub := 7;
+                BD.MainState_sub := 10;
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
             END_IF;
-        7:
+        10:
             BD.Sub_3T_State    := 789;
             BD.MainState    := 7;
             BD.MainState_sub    := 255;
@@ -1453,7 +1469,7 @@ BEGIN
 	    E_P1    := 0.5,
 	    E_P2    := 10.0,
 	    t5    := 70,
-	    k5_max    := 15,
+	    k5_max    := 20,
 	    CZQ_k5low    := 50,
 	    CZQ_k5high    := 500,
 	    CZ_t    := 250.0,
