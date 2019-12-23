@@ -303,10 +303,11 @@ FUNCTION_BLOCK "Reg35P_code"
         CZQ_k5low:    REAL;    
         CZQ_k5high:    REAL;    
         CZ_t:    REAL;    
-        CZ_cnt_max:    REAL;
+        CZ_cnt_max:    REAL;    
         k13_max:    REAL;    
-        CZQ_k13low:    REAL;    
-        CZQ_k13high:    REAL;    
+        ECZQ_k13low:    REAL;    
+        ECZQ_k13high:    REAL;    
+        k13_CZ_act:    REAL;    
         QFC_up:    REAL;    
         QFC_down:    REAL;    
         CZQ_QFC_k_low:    REAL;    
@@ -333,6 +334,11 @@ FUNCTION_BLOCK "Reg35P_code"
         CZQ_s:    REAL;
         CZ_cnt:    REAL;
         CZ_cnt_prev:    REAL;
+        ECZ_above1below0:    BOOL;
+        ECZQ:    REAL;
+        ECZQ_s:    REAL;
+        ECZ_cnt:    REAL;
+        ECZ_cnt_prev:    REAL;
         Q_full:    REAL;
         Q_full_prev:    REAL;
         Q_prevdir_up:    BOOL;
@@ -341,12 +347,12 @@ FUNCTION_BLOCK "Reg35P_code"
         avgQ3_k:    REAL;
     END_VAR
 BEGIN
-    (* Reg35P *)
+    (* Reg35P "Freighter" *)
     (* Copyright (c) 2019 Leonid Titov. All rights reserved *)
     (* www.avtprom.com *)
-    (* version 2019-12-22 *)
+    (* version 2019-12-23 *)
     IF dtclk.Q THEN
-        IF (#E5 < 0 AND CZ_above1below0) OR (#E5 > 0 AND NOT CZ_above1below0) THEN
+        IF (#E5 < 0 AND #CZ_above1below0) OR (#E5 > 0 AND NOT #CZ_above1below0) THEN
             #CZQ_s    := #CZ_cnt;
             #CZ_cnt_prev    := #CZ_cnt;
             #CZ_cnt    := 0;
@@ -356,9 +362,22 @@ BEGIN
         IF #CZ_cnt > #CZ_cnt_prev THEN
             #CZQ_s    := #CZ_cnt;
         END_IF;
-        IF #E5 < 0 THEN CZ_above1below0 := 0; END_IF;
-        IF #E5 > 0 THEN CZ_above1below0 := 1; END_IF;
-        #CZQ := #CZQ + ((#CZQ_s - #CZQ) / CZ_t);
+        IF #E5 < 0 THEN #CZ_above1below0 := 0; END_IF;
+        IF #E5 > 0 THEN #CZ_above1below0 := 1; END_IF;
+        #CZQ := #CZQ + ((#CZQ_s - #CZQ) / #CZ_t);
+        IF (#E < 0 AND #ECZ_above1below0) OR (#E > 0 AND NOT #ECZ_above1below0) THEN
+            #ECZQ_s    := #ECZ_cnt;
+            #ECZ_cnt_prev    := #ECZ_cnt;
+            #ECZ_cnt    := 0;
+        END_IF;
+        #ECZ_cnt := #ECZ_cnt + 1;
+        IF #ECZ_cnt > #CZ_cnt_max THEN #ECZ_cnt := #CZ_cnt_max; END_IF;
+        IF #ECZ_cnt > #ECZ_cnt_prev THEN
+            #ECZQ_s    := #ECZ_cnt;
+        END_IF;
+        IF #E < 0 THEN #ECZ_above1below0 := 0; END_IF;
+        IF #E > 0 THEN #ECZ_above1below0 := 1; END_IF;
+        #ECZQ := #ECZQ + ((#ECZQ_s - #ECZQ) / #CZ_t);
         #k5 := MapARange(
             v := #CZQ,
             i1:=#CZQ_k5low,    i2:=#CZQ_k5high,
@@ -366,11 +385,14 @@ BEGIN
         );
         #k5 := LimRange(L1:=1.0, L2:=#k5_max, v:=#k5);
         #k13 := MapARange(
-            v := #CZQ,
-            i1:=#CZQ_k13low,    i2:=#CZQ_k13high,
+            v := #ECZQ,
+            i1:=#ECZQ_k13low,    i2:=#ECZQ_k13high,
             o1:=0.0,    o2:=#k13_max
         );
         #k13 := LimRange(L1:=0.0, L2:=#k13_max, v:=#k13);
+        IF #CZQ > #k13_CZ_act THEN
+            #k13 := 0;
+        END_IF;
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := ((#A - #avgA) * #k5) + #avgA - #SP;
@@ -547,8 +569,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.02,
-			k3_P2    := 0.06,
+			k3_P1    := 0.002,
+			k3_P2    := 0.006,
 			E_P1    := 0.5,
 			E_P2    := 10.0,
 			t5    := 70,
@@ -557,9 +579,10 @@ BEGIN
 			CZQ_k5high    := 300,
 			CZ_t    := 150.0,
 			CZ_cnt_max    := 300,
-			k13_max    := 0.02,
-			CZQ_k13low    := 100,
-			CZQ_k13high    := 300,
+			k13_max    := 0.0,
+			ECZQ_k13low    := 100,
+			ECZQ_k13high    := 300,
+			k13_CZ_act    := 150,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -583,8 +606,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.02,
-			k3_P2    := 0.06,
+			k3_P1    := 0.002,
+			k3_P2    := 0.006,
 			E_P1    := 0.5,
 			E_P2    := 10.0,
 			t5    := 70,
@@ -593,9 +616,10 @@ BEGIN
 			CZQ_k5high    := 300,
 			CZ_t    := 150.0,
 			CZ_cnt_max    := 300,
-			k13_max    := 0.02,
-			CZQ_k13low    := 100,
-			CZQ_k13high    := 300,
+			k13_max    := 0.0,
+			ECZQ_k13low    := 100,
+			ECZQ_k13high    := 300,
+			k13_CZ_act    := 150,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -619,8 +643,8 @@ BEGIN
 			enable    := 1,
 			off_value    := 0.0,
 			kp    := 0.0,
-			k3_P1    := 0.02,
-			k3_P2    := 0.06,
+			k3_P1    := 0.002,
+			k3_P2    := 0.006,
 			E_P1    := 0.5,
 			E_P2    := 10.0,
 			t5    := 70,
@@ -629,9 +653,10 @@ BEGIN
 			CZQ_k5high    := 300,
 			CZ_t    := 150.0,
 			CZ_cnt_max    := 300,
-			k13_max    := 0.02,
-			CZQ_k13low    := 100,
-			CZQ_k13high    := 300,
+			k13_max    := 0.0,
+			ECZQ_k13low    := 100,
+			ECZQ_k13high    := 300,
+			k13_CZ_act    := 150,
 			QFC_up    := 20,
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
@@ -911,8 +936,8 @@ BEGIN
         END_IF;
     6: 
         BD.TankLevel_L2    := 8.0;
-        BD.TankLevel_L2_halfband    := 3.0;
-        BD.TankLevel_L3    := 15.0;
+        BD.TankLevel_L2_halfband    := 7.0;
+        BD.TankLevel_L3    := 20.0;
         CASE BD.MainState_sub OF
         0: 
             BD.MainState_sub := 1;
@@ -922,7 +947,7 @@ BEGIN
         1:
             ErrorMsg    := 14;
             BlueWarningPresence    := 1;
-            kt19_0001(xReset:=0, T:=T#3s);
+            kt19_0001(xReset:=0, T:=T#2s);
             IF kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 2;
@@ -930,6 +955,7 @@ BEGIN
                 BlueWarningPresence    := 0;
             END_IF;
         2:
+            ErrorMsg := 21;
             BD.V7    := 1;
             BD.V3    := 0;
             BD.Sub_3T_State    := 1;
@@ -938,8 +964,8 @@ BEGIN
                 BD.MainState_sub := 3;
             END_IF;
         3:
-            kt19_0001(xReset:=0, T:=T#30s);
-            IF NOT BD.V9 OR kt19_0001.xEnd THEN
+            kt19_0001(xReset:=0, T:=T#50s);
+            IF kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 4;
             END_IF;
@@ -960,7 +986,7 @@ BEGIN
                 avg01_0006(
                     init    := 0,
                     X    := BD.t4_real,
-                    t    := 120
+                    t    := 150
                 );
             END_IF;
             IF ABS(avg01_0006.Q - BD.t4_real) < 3.0 THEN
@@ -1006,7 +1032,7 @@ BEGIN
             BD.Sub_3T_State    := 63;
             IF BD.TankLevel > BD.TankLevel_L3 THEN
                 BD.MainState_sub := 9;
-                BD.variable_T := T#300s;
+                BD.variable_T := T#130s;
             END_IF;
         9:
             ErrorMsg    := 19;
@@ -1053,7 +1079,7 @@ BEGIN
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
-        IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+        IF BD.TankLevel < 1.0 OR BD.Flow < BD.Flow_SP * 0.2 THEN
             ErrorMsg    := 24;
             ErrorPresence    := 1;
             BD.MainState    := 10;
@@ -1125,7 +1151,7 @@ BEGIN
             BD.MainState    := 10;
             BD.MainState_sub    := 255;
         END_IF;
-        IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+        IF BD.TankLevel < 1.0 OR BD.Flow < BD.Flow_SP * 0.2 THEN
             ErrorMsg    := 24;
             ErrorPresence    := 1;
             BD.MainState    := 10;
@@ -1148,11 +1174,16 @@ BEGIN
             StatusButton3 := 0;
         1:
             BD.Sub_3T_State    := 0;
-            IF BD.TankLevel < (BD.TankLevel_L2 - BD.TankLevel_L2_halfband) THEN
+            IF BD.TankLevel < 1.0 OR BD.Flow < BD.Flow_SP * 0.2 THEN
                 BD.MainState_sub := 2;
-                BD.variable_T := T#300s;
             END_IF;
         2:
+            kt19_0001(xReset:=0, T:=T#6s);
+            IF kt19_0001.xEnd THEN
+                BD.MainState_sub := 3;
+                BD.variable_T := T#150s;
+            END_IF;
+        3:
             BD.Sub_3T_State    := 1;
             ErrorMsg    := 23;
             BlueWarningPresence    := 1;
@@ -1316,23 +1347,7 @@ BEGIN
         v:=MapARange(
             v := INT_TO_REAL(LL_Flow_420),
             i1:=0.0, i2:=27648.0,
-            o1:=0.0, o2:=20.25
-        )
-    );
-    #r1 := LimRange(
-        L1:=0.0, L2:=250.0,
-        v:=MapARange(
-            v := #r1,
-            i1:=0.0, i2:=12.49,
-            o1:=0.0, o2:=20.25
-        )
-    );
-    #r1 := LimRange(
-        L1:=0.0, L2:=250.0,
-        v:=MapARange(
-            v := #r1,
-            i1:=0.0, i2:=38,
-            o1:=0.0, o2:=32
+            o1:=0.0, o2:=30
         )
     );
     IF dtclk.Q THEN
@@ -1523,19 +1538,20 @@ BEGIN
 	    enable    := BD.t3_heating,
 	    off_value    := 0.0,
 	    kp    := 0.0,
-	    k3_P1    := 0.03,
-	    k3_P2    := 0.06,
+	    k3_P1    := 0.1,
+	    k3_P2    := 0.3,
 	    E_P1    := 0.2,
 	    E_P2    := 30.0,
 	    t5    := 140,
-	    k5_max    := 40,
+	    k5_max    := 30,
 	    CZQ_k5low    := 150,
 	    CZQ_k5high    := 600,
 	    CZ_t    := 250.0,
 	    CZ_cnt_max    := 600,    
 	    k13_max    := 0.02,
-	    CZQ_k13low    := 250,
-	    CZQ_k13high    := 400,
+	    ECZQ_k13low    := 150,
+	    ECZQ_k13high    := 400,
+	    k13_CZ_act    := 150,
 	    QFC_up    := 0.1,
 	    QFC_down    := 0.1,
 	    CZQ_QFC_k_low    := 30,
