@@ -403,7 +403,7 @@ BEGIN
         #avgQ3_k := MapARange(
             v := #CZQ,
             i1:=#avgQ3_k_CZQ_1,    i2:=#avgQ3_k_CZQ_2,
-            o1:=avgQ3_k_2,    o2:=#avgQ3_k_2
+            o1:=#avgQ3_k_1,    o2:=#avgQ3_k_2
         );
         #avgQ3_k := LimRange(L1:=#avgQ3_k_1, L2:=#avgQ3_k_2, v:=#avgQ3_k);
         #Q3 := #Q3 - ((#Q3 - #avgQ3) * #avgQ3_k);
