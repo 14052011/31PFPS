@@ -295,6 +295,11 @@ FUNCTION_BLOCK "Reg35P_code"
         QFC_down:    REAL;    
         CZQ_QFC_k_low:    REAL;    
         CZQ_QFC_k_high:    REAL;    
+        avgQ3_t:    REAL;
+        avgQ3_k_1:    REAL;
+        avgQ3_k_2:    REAL;
+        avgQ3_k_CZQ_1:    REAL;
+        avgQ3_k_CZQ_2:    REAL;
     END_VAR
     VAR_OUTPUT
         Q:    REAL;    
@@ -316,6 +321,8 @@ FUNCTION_BLOCK "Reg35P_code"
         Q_full_prev:    REAL;
         Q_prevdir_up:    BOOL;
         QFC_k:    REAL;
+        avgQ3:    REAL;
+        avgQ3_k:    REAL;
     END_VAR
 BEGIN
     (* Reg35P *)
@@ -351,15 +358,15 @@ BEGIN
         #avgA := #avgA + ((#A - #avgA) / #t5);
         #E  := #A - #SP;
         #E5 := ((#A - #avgA) * #k5) + #avgA - #SP;
-        IF ABS(#E) < #E_P1 THEN
+        IF ABS(#E5) < #E_P1 THEN
             #k3 := ABS(MapARange(
-                v := #E,
+                v := #E5,
                 i1:=0.0,    i2:=#E_P1,
                 o1:=0.0,    o2:=#k3_P1
             ));
         ELSE
             #k3 := ABS(MapARange(
-                v := #E,
+                v := #E5,
                 i1:=#E_P1,    i2:=#E_P2,
                 o1:=#k3_P1,    o2:=#k3_P2
             ));
@@ -392,6 +399,14 @@ BEGIN
         ELSIF #Q_full > #Q_full_prev THEN
             #Q_prevdir_up := 1;
         END_IF;
+        #avgQ3 := #avgQ3 + ((#Q3 - #avgQ3) / #avgQ3_t);
+        #avgQ3_k := MapARange(
+            v := #CZQ,
+            i1:=#avgQ3_k_CZQ_1,    i2:=#avgQ3_k_CZQ_2,
+            o1:=avgQ3_k_2,    o2:=#avgQ3_k_2
+        );
+        #avgQ3_k := LimRange(L1:=#avgQ3_k_1, L2:=#avgQ3_k_2, v:=#avgQ3_k);
+        #Q3 := #Q3 - ((#Q3 - #avgQ3) * #avgQ3_k);
         #Q_full_prev := #Q_full;
         #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
         #Q := #Q_full;
@@ -533,6 +548,11 @@ BEGIN
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
+			avgQ3_t    := 300,
+			avgQ3_k_1    := 0,
+			avgQ3_k_2    := 0,
+			avgQ3_k_CZQ_1    := 0,
+			avgQ3_k_CZQ_2    := 0,
 			Q    => BD.V6_Perc
 	    );
 	63: 
@@ -564,6 +584,11 @@ BEGIN
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
+			avgQ3_t    := 300,
+			avgQ3_k_1    := 0,
+			avgQ3_k_2    := 0,
+			avgQ3_k_CZQ_1    := 0,
+			avgQ3_k_CZQ_2    := 0,
 			Q    => BD.V6_Perc
 	    );
 	789: 
@@ -595,6 +620,11 @@ BEGIN
 			QFC_down    := 10,
 			CZQ_QFC_k_low    := 30,
 			CZQ_QFC_k_high    := 200,
+			avgQ3_t    := 300,
+			avgQ3_k_1    := 0,
+			avgQ3_k_2    := 0,
+			avgQ3_k_CZQ_1    := 0,
+			avgQ3_k_CZQ_2    := 0,
 			Q    => BD.V6_Perc
 	    );
 	END_CASE;
@@ -1490,7 +1520,12 @@ BEGIN
 	    QFC_up    := 0.1,
 	    QFC_down    := 0.1,
 	    CZQ_QFC_k_low    := 30,
-	    CZQ_QFC_k_high    := 200
+	    CZQ_QFC_k_high    := 200,
+	    avgQ3_t    := 400,
+	    avgQ3_k_1    := 0.01,
+	    avgQ3_k_2    := 0,
+	    avgQ3_k_CZQ_1    := 50,
+	    avgQ3_k_CZQ_2    := 600
 	);
 	BD.Vhs_Perc := MapARange(
 	    v := reg35P_0001.Q,
