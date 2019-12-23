@@ -8,7 +8,12 @@ FUNCTION "MapARange" : REAL
         o2:    REAL;
     END_VAR
 BEGIN
-    #MapARange := (#v - #i1) / (#i2 - #i1) * (#o2 - #o1) + #o1;
+    (* (c) Leonid Titov, version 2019-12-23 *)
+    IF #i2 <> #i1 THEN
+        #MapARange := (#v - #i1) / (#i2 - #i1) * (#o2 - #o1) + #o1;
+    ELSE
+        #MapARange := (#o1 + #o2) / 2;
+    END_IF;
 END_FUNCTION
 FUNCTION "LimRange" : REAL
     VAR_INPUT
@@ -563,8 +568,8 @@ BEGIN
 			avgQ3_t    := 300,
 			avgQ3_k_1    := 0,
 			avgQ3_k_2    := 0,
-			avgQ3_k_CZQ_1    := 0,
-			avgQ3_k_CZQ_2    := 0,
+			avgQ3_k_CZQ_1    := 1,
+			avgQ3_k_CZQ_2    := 1,
 			Q    => BD.V6_Perc
 	    );
 	63: 
@@ -599,8 +604,8 @@ BEGIN
 			avgQ3_t    := 300,
 			avgQ3_k_1    := 0,
 			avgQ3_k_2    := 0,
-			avgQ3_k_CZQ_1    := 0,
-			avgQ3_k_CZQ_2    := 0,
+			avgQ3_k_CZQ_1    := 1,
+			avgQ3_k_CZQ_2    := 1,
 			Q    => BD.V6_Perc
 	    );
 	789: 
@@ -635,8 +640,8 @@ BEGIN
 			avgQ3_t    := 300,
 			avgQ3_k_1    := 0,
 			avgQ3_k_2    := 0,
-			avgQ3_k_CZQ_1    := 0,
-			avgQ3_k_CZQ_2    := 0,
+			avgQ3_k_CZQ_1    := 1,
+			avgQ3_k_CZQ_2    := 1,
 			Q    => BD.V6_Perc
 	    );
 	END_CASE;
@@ -929,7 +934,7 @@ BEGIN
             BD.V7    := 1;
             BD.V3    := 0;
             BD.Sub_3T_State    := 1;
-            BD.t3_SP := 88;
+            BD.t3_SP := 79;
             IF BD.V9 THEN
                 BD.MainState_sub := 3;
             END_IF;
@@ -948,7 +953,7 @@ BEGIN
             BD.V7    := 1;
             BD.V3    := 0;
             BD.Sub_3T_State    := 1;
-            BD.t3_SP := 88;
+            BD.t3_SP := 79;
             StatusButton1 := 0;
             StatusButton2 := 0;
             StatusButton3 := 0;
@@ -956,7 +961,7 @@ BEGIN
                 avg01_0006(
                     init    := 0,
                     X    := BD.t4_real,
-                    t    := 20
+                    t    := 120
                 );
             END_IF;
             IF ABS(avg01_0006.Q - BD.t4_real) < 3.0 THEN
@@ -1007,9 +1012,9 @@ BEGIN
         9:
             ErrorMsg    := 19;
             BlueWarningPresence    := 1;
-            BD.V7    := 0;
+            BD.V7    := 1;
             BD.V3    := 0;
-            BD.V4    := 1;
+            BD.V4    := 0;
             BD.Sub_3T_State    := 62;
             StatusButton1 := 4;
             StatusButton2 := 4;
@@ -1024,6 +1029,9 @@ BEGIN
                 BlueWarningPresence    := 0;
             END_IF;
         10:
+            BD.V7    := 0;
+            BD.V3    := 0;
+            BD.V4    := 1;
             BD.Sub_3T_State    := 789;
             BD.MainState    := 7;
             BD.MainState_sub    := 255;
@@ -1516,8 +1524,8 @@ BEGIN
 	    enable    := BD.t3_heating,
 	    off_value    := 0.0,
 	    kp    := 0.0,
-	    k3_P1    := 0.008,
-	    k3_P2    := 0.02,
+	    k3_P1    := 0.03,
+	    k3_P2    := 0.06,
 	    E_P1    := 0.2,
 	    E_P2    := 30.0,
 	    t5    := 140,
@@ -1534,10 +1542,10 @@ BEGIN
 	    CZQ_QFC_k_low    := 30,
 	    CZQ_QFC_k_high    := 200,
 	    avgQ3_t    := 400,
-	    avgQ3_k_1    := 0.01,
+	    avgQ3_k_1    := 0.025,
 	    avgQ3_k_2    := 0,
 	    avgQ3_k_CZQ_1    := 50,
-	    avgQ3_k_CZQ_2    := 600
+	    avgQ3_k_CZQ_2    := 300
 	);
 	BD.Vhs_Perc := MapARange(
 	    v := reg35P_0001.Q,
