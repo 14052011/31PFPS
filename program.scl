@@ -21,25 +21,24 @@ FUNCTION "LimRange" : REAL
         L2:    REAL;
         v:    REAL;
     END_VAR
-    VAR
-        aL1:    REAL;
-        aL2:    REAL;
-    END_VAR
 BEGIN
     (* (c) Leonid Titov, version 2019-12-23 *)
-    IF L1 < L2 THEN
-        #aL1 := #L1;
-        #aL2 := #L2;
+    IF #L1 < #L2 THEN
+        IF #v < #L1 THEN
+            #LimRange := #L1;
+        ELSIF #v > #L2 THEN
+            #LimRange := #L2;
+        ELSE
+            #LimRange := #v;
+        END_IF;
     ELSE
-        #aL1 := #L2;
-        #aL2 := #L1;
-    END_IF;
-    IF #v < #aL1 THEN
-        #LimRange := #aL1;
-    ELSIF #v > #aL2 THEN
-        #LimRange := #aL2;
-    ELSE
-        #LimRange := #v;
+        IF #v < #L2 THEN
+            #LimRange := #L2;
+        ELSIF #v > #L1 THEN
+            #LimRange := #L1;
+        ELSE
+            #LimRange := #v;
+        END_IF;
     END_IF;
 END_FUNCTION
 DATA_BLOCK "t1"
