@@ -282,6 +282,7 @@ NON_RETAIN
         TankLevel_L3:    REAL;
         LL_Level_420_i1:    REAL;
         Flow:    REAL;
+        Flow_SP:    REAL;
         Sub_2SC_State:    INT;
     END_STRUCT;
 BEGIN
