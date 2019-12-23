@@ -422,7 +422,7 @@ BEGIN
             i1:=#avgQ3_k_CZQ_1,    i2:=#avgQ3_k_CZQ_2,
             o1:=#avgQ3_k_1,    o2:=#avgQ3_k_2
         );
-        IF #avgQ3_k < 0 THEN #avgQ3_k := 0;
+        IF #avgQ3_k < 0 THEN #avgQ3_k := 0; END_IF;
         #Q3 := #Q3 - ((#Q3 - #avgQ3) * #avgQ3_k);
         #Q_full_prev := #Q_full;
         #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
