@@ -421,6 +421,7 @@ BEGIN
             #Q_full    := #off_value;
         END_IF;
         #Q3 := LimRange(L1:=0.0, L2:=100.0, v:=#Q3);
+        #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);    
         #QFC_k := MapARange(
             v := #CZQ,
             i1:=#CZQ_QFC_k_low,    i2:=#CZQ_QFC_k_high,
@@ -445,8 +446,8 @@ BEGIN
         );
         IF #avgQ3_k < 0 THEN #avgQ3_k := 0; END_IF;
         #Q3 := #Q3 - ((#Q3 - #avgQ3) * #avgQ3_k);
+        #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);    
         #Q_full_prev := #Q_full;
-        #Q_full := LimRange(L1:=0.0, L2:=100.0, v:=#Q_full);
         #Q := #Q_full;
     END_IF;
 END_FUNCTION_BLOCK
