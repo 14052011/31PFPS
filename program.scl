@@ -833,7 +833,7 @@ BEGIN
             BD.Pump1_Perc    := 100.0;
             BD.Pump2    := 1;
             kt19_0001(xReset:=0, T:=T#250s);
-            IF kt19_0001.xEnd THEN
+            IF kt19_0001.xEnd OR ep_GA3_Btn.Q01 THEN
                 kt19_0001(xReset:=1, T:=T#0s);
                 BD.MainState_sub := 255;
                 BD.MainState := 3;
