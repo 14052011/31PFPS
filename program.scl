@@ -551,14 +551,18 @@ BEGIN
 	Step_2SC := INT_TO_WORD( BD.Sub_2SC_State );
 	CASE BD.Sub_3T_State OF
 	0: 
+	    BD.V6_Perc := 0;
 	    BD.V9 := 0;
 	1: 
+	    BD.V6_Perc := 0;
 	    IF BD.TankLevel < 20.0 THEN
 	        BD.V9 := 1;
 	    END_IF;
 	    IF BD.TankLevel > 80.0 THEN
 	        BD.V9 := 0;
 	    END_IF;
+	13: 
+	    ;
 	62: 
 	    reg35P_0002(
 	        A    := MapARange(
@@ -708,6 +712,7 @@ BEGIN
         BlueWarningPresence    := 0;
         BD.variable_T    := T#0s;
     1: 
+        BD.Flow_SP := 20.0;
         CASE BD.MainState_sub OF
         0: 
             BD.MainState_sub := 10;
@@ -809,6 +814,7 @@ BEGIN
         StatusButton1 := 0;
         StatusButton2 := 0;
         StatusButton3 := 0;
+        BD.Flow_SP := 20.0;
         CASE BD.MainState_sub OF
         0: 
             BD.MainState_sub := 1;
@@ -910,6 +916,7 @@ BEGIN
         StatusButton2 := 0;
         StatusButton3 := 0;
     5: 
+        BD.Flow_SP := 20.0;
         BD.Sub_2SC_State := 0;
         BD.V6_Perc    := 0.0;
         BD.Sub_3T_State    := 1;
@@ -1184,8 +1191,7 @@ BEGIN
                 BD.variable_T := BD.variable_T + T#12s;
             ELSIF ep_GA2_Btn.Q01 OR kt19_0001.xEnd THEN
                 kt19_0001(xReset:=1, T:=T#0s);
-                BD.MainState    := 11;
-                BD.MainState_sub    := 255;
+                BD.MainState_sub := 11;
                 ErrorMsg    := 0;
                 BlueWarningPresence    := 0;
                 StatusButton1 := 0;
@@ -1396,6 +1402,8 @@ BEGIN
             BD.MainState_sub := 0;
         END_IF;
     13: 
+        BD.Sub_2SC_State := 13;
+        BD.Sub_3T_State := 13;
         StatusButton1 := 2;
         StatusButton2 := 0;
         StatusButton3 := 0;
@@ -1510,11 +1518,12 @@ BEGIN
         avg01_0004(
             init    := 0,
             X    := r1,
-            t    := 4,
+            t    := 2,
             Q    => BD.Flow
         );
     END_IF;
     Flow := INT_TO_WORD(REAL_TO_INT( BD.Flow * 10 ));
+    SP_Flow := REAL_TO_INT(BD.Flow_SP * 10);
     PercVolumeData := INT_TO_WORD( LL_Level_420 );
     r1 := INT_TO_REAL(LL_Level_420);
     r1 := LimRange(
@@ -1698,7 +1707,7 @@ BEGIN
 	    k3_P2    := 0.25,
 	    E_P1    := 0.05,
 	    E_P2    := 30.0,
-	    t5    := 600,
+	    t5    := 1200,
 	    k5_max    := 10,
 	    CZQ_k5low    := 150,
 	    CZQ_k5high    := 600,
